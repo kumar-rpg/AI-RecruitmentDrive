@@ -49,9 +49,17 @@ export async function getUploadTargets(category) {
 // straight to Storage. This just logs the metadata row — no file bytes pass
 // through here, so it's a small, fast request safe for any Vercel plan.
 export async function submitApplication(payload) {
-  const { id, name, category, org, program, resumePath, transcriptPath } = payload;
+  const { id, name, email, phone, category, org, program, resumePath, transcriptPath } = payload;
 
-  if (!id || !name?.trim() || !VALID_CATEGORIES.includes(category) || !org?.trim() || !program?.trim()) {
+  if (
+    !id ||
+    !name?.trim() ||
+    !email?.trim() ||
+    !phone?.trim() ||
+    !VALID_CATEGORIES.includes(category) ||
+    !org?.trim() ||
+    !program?.trim()
+  ) {
     throw new Error('Missing required fields.');
   }
   if (!resumePath) {
@@ -65,6 +73,8 @@ export async function submitApplication(payload) {
   const { error } = await admin.from('applicants').insert({
     id,
     name: name.trim(),
+    email: email.trim(),
+    phone: phone.trim(),
     category,
     org: org.trim(),
     program_or_role: program.trim(),

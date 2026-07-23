@@ -5,6 +5,8 @@ create extension if not exists "pgcrypto";
 create table if not exists public.applicants (
   id uuid primary key,
   name text not null,
+  email text not null,
+  phone text not null,
   category text not null check (category in ('intern', 'grad', 'working')),
   org text not null,
   program_or_role text not null,

@@ -5,7 +5,8 @@ import ThemeToggle from '@/components/ThemeToggle';
 import { supabaseBrowser } from '@/lib/supabaseClient';
 import { getUploadTargets, submitApplication } from './actions';
 
-const initialForm = { name: '', category: '', org: '', program: '' };
+const initialForm = { name: '', email: '', phone: '', category: '', org: '', program: '' };
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function ApplyPage() {
   const [form, setForm] = useState(initialForm);
@@ -28,8 +29,19 @@ export default function ApplyPage() {
     e.preventDefault();
     setError('');
 
-    if (!form.name.trim() || !form.category || !form.org.trim() || !form.program.trim()) {
+    if (
+      !form.name.trim() ||
+      !form.email.trim() ||
+      !form.phone.trim() ||
+      !form.category ||
+      !form.org.trim() ||
+      !form.program.trim()
+    ) {
       setError('Please fill in all fields and pick a category.');
+      return;
+    }
+    if (!EMAIL_PATTERN.test(form.email.trim())) {
+      setError('Please enter a valid email address.');
       return;
     }
     if (!resumeFile) {
@@ -74,6 +86,8 @@ export default function ApplyPage() {
       await submitApplication({
         id: targets.id,
         name: form.name,
+        email: form.email,
+        phone: form.phone,
         category: form.category,
         org: form.org,
         program: form.program,
@@ -110,6 +124,22 @@ export default function ApplyPage() {
           placeholder="e.g. Jane Tan"
           value={form.name}
           onChange={(e) => setForm({ ...form, name: e.target.value })}
+        />
+
+        <label>Email Address</label>
+        <input
+          type="email"
+          placeholder="e.g. jane.tan@email.com"
+          value={form.email}
+          onChange={(e) => setForm({ ...form, email: e.target.value })}
+        />
+
+        <label>Mobile No.</label>
+        <input
+          type="text"
+          placeholder="e.g. 012-345 6789"
+          value={form.phone}
+          onChange={(e) => setForm({ ...form, phone: e.target.value })}
         />
 
         <label>Are you currently studying, or already working?</label>

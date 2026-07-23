@@ -20,7 +20,16 @@ export default function DashboardClient({ initialApplicants, userEmail }) {
       const missingDoc = a.category !== 'working' && !a.transcript_path;
       if (filterCat && a.category !== filterCat) return false;
       if (filterFlag === 'missing' && !missingDoc) return false;
-      if (s && !(a.name.toLowerCase().includes(s) || a.org.toLowerCase().includes(s))) return false;
+      if (
+        s &&
+        !(
+          a.name.toLowerCase().includes(s) ||
+          a.org.toLowerCase().includes(s) ||
+          a.email?.toLowerCase().includes(s) ||
+          a.phone?.toLowerCase().includes(s)
+        )
+      )
+        return false;
       return true;
     });
   }, [applicants, search, filterCat, filterFlag]);
@@ -58,9 +67,20 @@ export default function DashboardClient({ initialApplicants, userEmail }) {
   }
 
   function exportCSV() {
-    const headers = ['Name', 'Category', 'University/Employer', 'Program/Role', 'Status', 'Submitted At'];
+    const headers = [
+      'Name',
+      'Email',
+      'Phone',
+      'Category',
+      'University/Employer',
+      'Program/Role',
+      'Status',
+      'Submitted At',
+    ];
     const rows = filtered.map((a) => [
       a.name,
+      a.email,
+      a.phone,
       CATEGORY_LABEL[a.category],
       a.org,
       a.program_or_role,
@@ -98,7 +118,7 @@ export default function DashboardClient({ initialApplicants, userEmail }) {
         <div className="toolbar">
           <input
             type="text"
-            placeholder="Search name, university, employer..."
+            placeholder="Search name, email, phone, university, employer..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -122,6 +142,8 @@ export default function DashboardClient({ initialApplicants, userEmail }) {
             <thead>
               <tr>
                 <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
                 <th>Category</th>
                 <th>University/Employer</th>
                 <th>Program/Role</th>
@@ -139,6 +161,8 @@ export default function DashboardClient({ initialApplicants, userEmail }) {
                     <td>
                       {a.name} {missingDoc && <span className="flag">⚠</span>}
                     </td>
+                    <td>{a.email}</td>
+                    <td>{a.phone}</td>
                     <td>{CATEGORY_LABEL[a.category]}</td>
                     <td>{a.org}</td>
                     <td>{a.program_or_role}</td>
