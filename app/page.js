@@ -25,6 +25,22 @@ export default function ApplyPage() {
     return file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
   }
 
+  function handleFileSelect(e, setFile, label) {
+    const files = e.target.files;
+    if (!files || files.length === 0) {
+      setFile(null);
+      return;
+    }
+    if (files.length > 1) {
+      setError(`Please select only 1 file for ${label} — you selected ${files.length}.`);
+      e.target.value = '';
+      setFile(null);
+      return;
+    }
+    setError('');
+    setFile(files[0]);
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
     setError('');
@@ -181,24 +197,28 @@ export default function ApplyPage() {
           onChange={(e) => setForm({ ...form, program: e.target.value })}
         />
 
-        <label>Resume (PDF only)</label>
+        <label>Resume (PDF only — 1 file)</label>
         <div className="file-row">
           <input
             type="file"
             accept="application/pdf"
-            onChange={(e) => setResumeFile(e.target.files?.[0] || null)}
+            multiple={false}
+            onChange={(e) => handleFileSelect(e, setResumeFile, 'Resume')}
           />
+          <div className="hint">{resumeFile ? resumeFile.name : 'No file chosen'}</div>
         </div>
 
         {!isWorking && (
           <>
-            <label>Academic Transcript — from start of program (PDF only)</label>
+            <label>Academic Transcript — from start of program (PDF only — 1 file)</label>
             <div className="file-row">
               <input
                 type="file"
                 accept="application/pdf"
-                onChange={(e) => setTranscriptFile(e.target.files?.[0] || null)}
+                multiple={false}
+                onChange={(e) => handleFileSelect(e, setTranscriptFile, 'Academic Transcript')}
               />
+              <div className="hint">{transcriptFile ? transcriptFile.name : 'No file chosen'}</div>
             </div>
           </>
         )}
