@@ -141,6 +141,7 @@ export default function DashboardClient({ initialApplicants, userEmail }) {
           <table>
             <thead>
               <tr>
+                <th>Status</th>
                 <th>Name</th>
                 <th>Email</th>
                 <th>Phone</th>
@@ -149,7 +150,6 @@ export default function DashboardClient({ initialApplicants, userEmail }) {
                 <th>Program/Role</th>
                 <th>Resume</th>
                 <th>Transcript</th>
-                <th>Status</th>
                 <th></th>
               </tr>
             </thead>
@@ -158,6 +158,19 @@ export default function DashboardClient({ initialApplicants, userEmail }) {
                 const missingDoc = a.category !== 'working' && !a.transcript_path;
                 return (
                   <tr key={a.id}>
+                    <td>
+                      <select
+                        className="status"
+                        value={a.status}
+                        onChange={(e) => handleStatusChange(a.id, e.target.value)}
+                      >
+                        {STATUSES.map((s) => (
+                          <option key={s} value={s}>
+                            {s}
+                          </option>
+                        ))}
+                      </select>
+                    </td>
                     <td>
                       {a.name} {missingDoc && <span className="flag">⚠</span>}
                     </td>
@@ -189,19 +202,6 @@ export default function DashboardClient({ initialApplicants, userEmail }) {
                       ) : (
                         <span className="pill bad">Missing</span>
                       )}
-                    </td>
-                    <td>
-                      <select
-                        className="status"
-                        value={a.status}
-                        onChange={(e) => handleStatusChange(a.id, e.target.value)}
-                      >
-                        {STATUSES.map((s) => (
-                          <option key={s} value={s}>
-                            {s}
-                          </option>
-                        ))}
-                      </select>
                     </td>
                     <td>
                       <button
