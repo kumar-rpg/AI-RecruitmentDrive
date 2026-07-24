@@ -5,6 +5,7 @@ import ApplyForm from './ApplyForm';
 // page must be rendered fresh per request rather than cached as static HTML
 // at build time.
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function ApplyPage() {
   const { data: positions, error } = await supabaseAdmin()
