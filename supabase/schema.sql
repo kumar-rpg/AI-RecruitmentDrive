@@ -2,6 +2,21 @@
 
 create extension if not exists "pgcrypto";
 
+create table if not exists public.positions (
+  id uuid primary key default gen_random_uuid(),
+  title text not null unique,
+  is_active boolean not null default true,
+  created_at timestamptz not null default now()
+);
+
+alter table public.positions enable row level security;
+
+insert into public.positions (title) values
+  ('Software Engineer Intern'),
+  ('Robotics Engineer'),
+  ('General Application')
+on conflict do nothing;
+
 create table if not exists public.applicants (
   id uuid primary key,
   name text not null,
@@ -10,6 +25,7 @@ create table if not exists public.applicants (
   category text not null check (category in ('intern', 'grad', 'working')),
   org text not null,
   program_or_role text not null,
+  position text not null,
   resume_path text not null,
   transcript_path text,
   status text not null default 'New' check (status in ('New', 'Reviewing', 'Shortlisted', 'Rejected')),

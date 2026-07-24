@@ -49,6 +49,38 @@ export async function getDocUrl(path) {
   return data.signedUrl;
 }
 
+export async function createPosition(title) {
+  await requireAdmin();
+  const trimmed = title?.trim();
+  if (!trimmed) throw new Error('Position title cannot be empty.');
+
+  const { error } = await supabaseAdmin().from('positions').insert({ title: trimmed });
+  if (error) {
+    if (error.code === '23505') throw new Error('A position with that title already exists.');
+    throw new Error('Could not create position: ' + error.message);
+  }
+  return { ok: true };
+}
+
+export async function togglePositionActive(id, isActive) {
+  await requireAdmin();
+
+  const { error } = await supabaseAdmin()
+    .from('positions')
+    .update({ is_active: isActive })
+    .eq('id', id);
+  if (error) throw new Error('Could not update position: ' + error.message);
+  return { ok: true };
+}
+
+export async function deletePosition(id) {
+  await requireAdmin();
+
+  const { error } = await supabaseAdmin().from('positions').delete().eq('id', id);
+  if (error) throw new Error('Could not delete position: ' + error.message);
+  return { ok: true };
+}
+
 export async function signOut() {
   const supabase = supabaseServer();
   await supabase.auth.signOut();

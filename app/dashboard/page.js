@@ -20,5 +20,20 @@ export default async function DashboardPage() {
     throw new Error('Could not load applicants: ' + error.message);
   }
 
-  return <DashboardClient initialApplicants={applicants || []} userEmail={user.email} />;
+  const { data: positions, error: positionsError } = await supabaseAdmin()
+    .from('positions')
+    .select('*')
+    .order('created_at', { ascending: true });
+
+  if (positionsError) {
+    throw new Error('Could not load positions: ' + positionsError.message);
+  }
+
+  return (
+    <DashboardClient
+      initialApplicants={applicants || []}
+      initialPositions={positions || []}
+      userEmail={user.email}
+    />
+  );
 }

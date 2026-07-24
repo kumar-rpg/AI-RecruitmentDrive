@@ -49,13 +49,15 @@ export async function getUploadTargets(category) {
 // straight to Storage. This just logs the metadata row — no file bytes pass
 // through here, so it's a small, fast request safe for any Vercel plan.
 export async function submitApplication(payload) {
-  const { id, name, email, phone, category, org, program, resumePath, transcriptPath } = payload;
+  const { id, name, email, phone, position, category, org, program, resumePath, transcriptPath } =
+    payload;
 
   if (
     !id ||
     !name?.trim() ||
     !email?.trim() ||
     !phone?.trim() ||
+    !position?.trim() ||
     !VALID_CATEGORIES.includes(category) ||
     !org?.trim() ||
     !program?.trim()
@@ -70,11 +72,23 @@ export async function submitApplication(payload) {
   }
 
   const admin = supabaseAdmin();
+
+  const { data: validPosition } = await admin
+    .from('positions')
+    .select('id')
+    .eq('title', position.trim())
+    .eq('is_active', true)
+    .maybeSingle();
+  if (!validPosition) {
+    throw new Error('That position is no longer open. Please refresh and pick another.');
+  }
+
   const { error } = await admin.from('applicants').insert({
     id,
     name: name.trim(),
     email: email.trim(),
     phone: phone.trim(),
+    position: position.trim(),
     category,
     org: org.trim(),
     program_or_role: program.trim(),

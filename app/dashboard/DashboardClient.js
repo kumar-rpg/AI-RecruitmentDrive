@@ -2,17 +2,30 @@
 
 import { useMemo, useState } from 'react';
 import ThemeToggle from '@/components/ThemeToggle';
-import { updateStatus, deleteApplicant, getDocUrl, signOut } from './actions';
+import {
+  updateStatus,
+  deleteApplicant,
+  getDocUrl,
+  signOut,
+  createPosition,
+  togglePositionActive,
+  deletePosition,
+} from './actions';
 
 const CATEGORY_LABEL = { intern: 'Intern', grad: 'Grad / Job-seeking', working: 'Already Working' };
 const STATUSES = ['New', 'Reviewing', 'Shortlisted', 'Rejected'];
 
-export default function DashboardClient({ initialApplicants, userEmail }) {
+export default function DashboardClient({ initialApplicants, initialPositions, userEmail }) {
   const [applicants, setApplicants] = useState(initialApplicants);
+  const [positions, setPositions] = useState(initialPositions);
   const [search, setSearch] = useState('');
   const [filterCat, setFilterCat] = useState('');
   const [filterFlag, setFilterFlag] = useState('');
+  const [filterPosition, setFilterPosition] = useState('');
   const [busyId, setBusyId] = useState(null);
+  const [newPositionTitle, setNewPositionTitle] = useState('');
+  const [positionError, setPositionError] = useState('');
+  const [positionBusyId, setPositionBusyId] = useState(null);
 
   const filtered = useMemo(() => {
     const s = search.toLowerCase();
@@ -20,6 +33,7 @@ export default function DashboardClient({ initialApplicants, userEmail }) {
       const missingDoc = a.category !== 'working' && !a.transcript_path;
       if (filterCat && a.category !== filterCat) return false;
       if (filterFlag === 'missing' && !missingDoc) return false;
+      if (filterPosition && a.position !== filterPosition) return false;
       if (
         s &&
         !(
@@ -32,7 +46,7 @@ export default function DashboardClient({ initialApplicants, userEmail }) {
         return false;
       return true;
     });
-  }, [applicants, search, filterCat, filterFlag]);
+  }, [applicants, search, filterCat, filterFlag, filterPosition]);
 
   async function handleStatusChange(id, status) {
     setApplicants((prev) => prev.map((a) => (a.id === id ? { ...a, status } : a)));
@@ -71,6 +85,7 @@ export default function DashboardClient({ initialApplicants, userEmail }) {
       'Name',
       'Email',
       'Phone',
+      'Position',
       'Category',
       'University/Employer',
       'Program/Role',
@@ -81,6 +96,7 @@ export default function DashboardClient({ initialApplicants, userEmail }) {
       a.name,
       a.email,
       a.phone,
+      a.position,
       CATEGORY_LABEL[a.category],
       a.org,
       a.program_or_role,
@@ -99,6 +115,42 @@ export default function DashboardClient({ initialApplicants, userEmail }) {
     URL.revokeObjectURL(url);
   }
 
+  async function handleAddPosition(e) {
+    e.preventDefault();
+    setPositionError('');
+    const title = newPositionTitle.trim();
+    if (!title) return;
+    try {
+      await createPosition(title);
+      setPositions((prev) => [...prev, { id: crypto.randomUUID(), title, is_active: true }]);
+      setNewPositionTitle('');
+    } catch (err) {
+      setPositionError(err.message);
+    }
+  }
+
+  async function handleTogglePosition(id, isActive) {
+    setPositions((prev) => prev.map((p) => (p.id === id ? { ...p, is_active: isActive } : p)));
+    try {
+      await togglePositionActive(id, isActive);
+    } catch (err) {
+      alert('Could not update position: ' + err.message);
+    }
+  }
+
+  async function handleDeletePosition(id) {
+    if (!confirm('Remove this position? Past applications will keep the title on record.')) return;
+    setPositionBusyId(id);
+    try {
+      await deletePosition(id);
+      setPositions((prev) => prev.filter((p) => p.id !== id));
+    } catch (err) {
+      alert('Could not delete position: ' + err.message);
+    } finally {
+      setPositionBusyId(null);
+    }
+  }
+
   return (
     <div className="wrap">
       <header className="page-header">
@@ -115,6 +167,66 @@ export default function DashboardClient({ initialApplicants, userEmail }) {
       </header>
 
       <div className="card">
+        <label>Manage Positions</label>
+        <form
+          onSubmit={handleAddPosition}
+          style={{ display: 'flex', gap: '8px', marginBottom: '14px' }}
+        >
+          <input
+            type="text"
+            placeholder="e.g. Firmware Engineer Intern"
+            value={newPositionTitle}
+            onChange={(e) => setNewPositionTitle(e.target.value)}
+          />
+          <button className="primary" type="submit" style={{ marginTop: 0, whiteSpace: 'nowrap' }}>
+            Add Position
+          </button>
+        </form>
+        {positionError && <div className="err">{positionError}</div>}
+
+        <div className="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Open on Form</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {positions.map((p) => (
+                <tr key={p.id}>
+                  <td>{p.title}</td>
+                  <td>
+                    <span
+                      className={'pill ' + (p.is_active ? 'ok' : 'na')}
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => handleTogglePosition(p.id, !p.is_active)}
+                    >
+                      {p.is_active ? 'Open' : 'Closed'}
+                    </span>
+                  </td>
+                  <td>
+                    <button
+                      className="ghost"
+                      onClick={() => handleDeletePosition(p.id)}
+                      disabled={positionBusyId === p.id}
+                      type="button"
+                    >
+                      ✕
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {positions.length === 0 && (
+            <div className="empty">No positions yet — add one above.</div>
+          )}
+        </div>
+      </div>
+
+      <div className="card">
         <div className="toolbar">
           <input
             type="text"
@@ -127,6 +239,14 @@ export default function DashboardClient({ initialApplicants, userEmail }) {
             <option value="intern">Intern</option>
             <option value="grad">Grad / Job-seeking</option>
             <option value="working">Already Working</option>
+          </select>
+          <select value={filterPosition} onChange={(e) => setFilterPosition(e.target.value)}>
+            <option value="">All positions</option>
+            {positions.map((p) => (
+              <option key={p.id} value={p.title}>
+                {p.title}
+              </option>
+            ))}
           </select>
           <select value={filterFlag} onChange={(e) => setFilterFlag(e.target.value)}>
             <option value="">All statuses</option>
@@ -145,6 +265,7 @@ export default function DashboardClient({ initialApplicants, userEmail }) {
                 <th>Name</th>
                 <th>Email</th>
                 <th>Phone</th>
+                <th>Position</th>
                 <th>Category</th>
                 <th>University/Employer</th>
                 <th>Program/Role</th>
@@ -176,6 +297,7 @@ export default function DashboardClient({ initialApplicants, userEmail }) {
                     </td>
                     <td>{a.email}</td>
                     <td>{a.phone}</td>
+                    <td>{a.position}</td>
                     <td>{CATEGORY_LABEL[a.category]}</td>
                     <td>{a.org}</td>
                     <td>{a.program_or_role}</td>
