@@ -68,28 +68,44 @@ export default function ApplyForm({ positions }) {
     e.preventDefault();
     setError('');
 
-    if (
-      !form.name.trim() ||
-      !form.email.trim() ||
-      !form.phone.trim() ||
-      !form.position ||
-      !form.category ||
-      !form.org.trim() ||
-      !form.program.trim()
-    ) {
-      setError('Please fill in all fields, pick a position, and pick a category.');
+    if (!form.name.trim()) {
+      setError('Full Name cannot be blank.');
       return;
     }
     if (!NAME_PATTERN.test(form.name.trim())) {
       setError('Full Name must contain letters only (no numbers or symbols).');
       return;
     }
+    if (!form.email.trim()) {
+      setError('Email Address cannot be blank.');
+      return;
+    }
     if (!EMAIL_PATTERN.test(form.email.trim())) {
       setError('Please enter a valid email address.');
       return;
     }
+    if (!form.phone.trim()) {
+      setError('Mobile No. cannot be blank.');
+      return;
+    }
     if (!PHONE_PATTERN.test(form.phone.trim())) {
       setError('Mobile No. must be in the format 016-4028507 (3 digits, hyphen, then the rest).');
+      return;
+    }
+    if (!form.position) {
+      setError('Please select a Position Applied For.');
+      return;
+    }
+    if (!form.category) {
+      setError('Please select one: Intern, Graduating / Job-seeking, or Already Working.');
+      return;
+    }
+    if (!form.org.trim()) {
+      setError(`${orgLabel} cannot be blank.`);
+      return;
+    }
+    if (!form.program.trim()) {
+      setError(`${progLabel} cannot be blank.`);
       return;
     }
     if (!resumeFile) {
@@ -102,7 +118,7 @@ export default function ApplyForm({ positions }) {
     }
     if (!isWorking) {
       if (!transcriptFile) {
-        setError('Transcript is required for this category.');
+        setError('Academic Transcript is required for Intern / Graduating / Job-seeking applicants.');
         return;
       }
       if (!isPDF(transcriptFile)) {
@@ -182,6 +198,7 @@ export default function ApplyForm({ positions }) {
           placeholder="e.g. jane.tan@email.com"
           value={form.email}
           onChange={(e) => setForm({ ...form, email: e.target.value })}
+          required
         />
 
         <label>Mobile No.</label>
@@ -233,6 +250,7 @@ export default function ApplyForm({ positions }) {
                 value={opt.val}
                 checked={form.category === opt.val}
                 onChange={() => setForm({ ...form, category: opt.val })}
+                required
               />{' '}
               {opt.label}
             </label>
@@ -245,6 +263,7 @@ export default function ApplyForm({ positions }) {
           placeholder="e.g. TARUMT"
           value={form.org}
           onChange={(e) => setForm({ ...form, org: e.target.value })}
+          required
         />
 
         <label>{progLabel}</label>
@@ -253,6 +272,7 @@ export default function ApplyForm({ positions }) {
           placeholder="e.g. B.Sc Computer Science / Software Engineer"
           value={form.program}
           onChange={(e) => setForm({ ...form, program: e.target.value })}
+          required
         />
 
         <label>Resume (PDF only — 1 file)</label>
