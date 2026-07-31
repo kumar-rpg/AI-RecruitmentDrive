@@ -5,6 +5,8 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin';
 
 const BUCKET = 'applications';
 const VALID_CATEGORIES = ['intern', 'grad', 'working'];
+const NAME_PATTERN = /^[A-Za-z]+(?:\s[A-Za-z]+)*$/;
+const PHONE_PATTERN = /^\d{3}-\d{4,8}$/;
 
 // Step 1: called before any file is uploaded. Creates a unique application id
 // and short-lived, single-use signed upload URLs so the browser can send the
@@ -63,6 +65,12 @@ export async function submitApplication(payload) {
     !program?.trim()
   ) {
     throw new Error('Missing required fields.');
+  }
+  if (!NAME_PATTERN.test(name.trim())) {
+    throw new Error('Name must contain letters only.');
+  }
+  if (!PHONE_PATTERN.test(phone.trim())) {
+    throw new Error('Phone number must be in the format 016-4028507.');
   }
   if (!resumePath) {
     throw new Error('Resume was not uploaded.');

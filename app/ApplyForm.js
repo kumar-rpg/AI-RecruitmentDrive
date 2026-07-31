@@ -15,6 +15,21 @@ const initialForm = {
   position: '',
 };
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const NAME_PATTERN = /^[A-Za-z]+(?:\s[A-Za-z]+)*$/;
+const PHONE_PATTERN = /^\d{3}-\d{4,8}$/;
+
+function sanitizeName(raw) {
+  // Letters and single spaces between words only — strips digits, symbols,
+  // and collapses repeated spaces as the user types.
+  return raw.replace(/[^A-Za-z\s]/g, '').replace(/\s{2,}/g, ' ');
+}
+
+function formatPhone(raw) {
+  // Digits only, hyphen auto-inserted after the first 3 (e.g. 016-4028507).
+  const digits = raw.replace(/\D/g, '').slice(0, 11);
+  if (digits.length <= 3) return digits;
+  return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+}
 
 export default function ApplyForm({ positions }) {
   const [form, setForm] = useState(initialForm);
@@ -65,8 +80,16 @@ export default function ApplyForm({ positions }) {
       setError('Please fill in all fields, pick a position, and pick a category.');
       return;
     }
+    if (!NAME_PATTERN.test(form.name.trim())) {
+      setError('Full Name must contain letters only (no numbers or symbols).');
+      return;
+    }
     if (!EMAIL_PATTERN.test(form.email.trim())) {
       setError('Please enter a valid email address.');
+      return;
+    }
+    if (!PHONE_PATTERN.test(form.phone.trim())) {
+      setError('Mobile No. must be in the format 016-4028507 (3 digits, hyphen, then the rest).');
       return;
     }
     if (!resumeFile) {
@@ -149,7 +172,8 @@ export default function ApplyForm({ positions }) {
           type="text"
           placeholder="e.g. Jane Tan"
           value={form.name}
-          onChange={(e) => setForm({ ...form, name: e.target.value })}
+          onChange={(e) => setForm({ ...form, name: sanitizeName(e.target.value) })}
+          required
         />
 
         <label>Email Address</label>
@@ -163,9 +187,11 @@ export default function ApplyForm({ positions }) {
         <label>Mobile No.</label>
         <input
           type="text"
-          placeholder="e.g. 012-345 6789"
+          inputMode="numeric"
+          placeholder="e.g. 016-4028507"
           value={form.phone}
-          onChange={(e) => setForm({ ...form, phone: e.target.value })}
+          onChange={(e) => setForm({ ...form, phone: formatPhone(e.target.value) })}
+          required
         />
 
         <label>Position Applied For</label>
@@ -177,8 +203,11 @@ export default function ApplyForm({ positions }) {
           <select
             value={form.position}
             onChange={(e) => setForm({ ...form, position: e.target.value })}
+            required
           >
-            <option value="">Select a position…</option>
+            <option value="" disabled>
+              Select a position…
+            </option>
             {positions.map((p) => (
               <option key={p.id} value={p.title}>
                 {p.title}
