@@ -40,8 +40,6 @@ export default function ApplyForm({ positions }) {
   const [success, setSuccess] = useState(false);
 
   const isWorking = form.category === 'working';
-  const orgLabel = isWorking ? 'Current Employer' : 'University';
-  const progLabel = isWorking ? 'Current Role' : 'Program';
 
   function isPDF(file) {
     if (!file) return false;
@@ -100,13 +98,15 @@ export default function ApplyForm({ positions }) {
       setError('Please select one: Intern, Graduating / Job-seeking, or Already Working.');
       return;
     }
-    if (!form.org.trim()) {
-      setError(`${orgLabel} cannot be blank.`);
-      return;
-    }
-    if (!form.program.trim()) {
-      setError(`${progLabel} cannot be blank.`);
-      return;
+    if (!isWorking) {
+      if (!form.org.trim()) {
+        setError('University cannot be blank.');
+        return;
+      }
+      if (!form.program.trim()) {
+        setError('Program cannot be blank.');
+        return;
+      }
     }
     if (!resumeFile) {
       setError('Resume is required.');
@@ -154,8 +154,8 @@ export default function ApplyForm({ positions }) {
         phone: form.phone,
         position: form.position,
         category: form.category,
-        org: form.org,
-        program: form.program,
+        org: isWorking ? '' : form.org,
+        program: isWorking ? '' : form.program,
         resumePath: targets.resume.path,
         transcriptPath,
       });
@@ -249,7 +249,14 @@ export default function ApplyForm({ positions }) {
                 name="category"
                 value={opt.val}
                 checked={form.category === opt.val}
-                onChange={() => setForm({ ...form, category: opt.val })}
+                onChange={() =>
+                  setForm({
+                    ...form,
+                    category: opt.val,
+                    org: opt.val === 'working' ? '' : form.org,
+                    program: opt.val === 'working' ? '' : form.program,
+                  })
+                }
                 required
               />{' '}
               {opt.label}
@@ -257,23 +264,27 @@ export default function ApplyForm({ positions }) {
           ))}
         </div>
 
-        <label>{orgLabel}</label>
-        <input
-          type="text"
-          placeholder="e.g. TARUMT"
-          value={form.org}
-          onChange={(e) => setForm({ ...form, org: e.target.value })}
-          required
-        />
+        {!isWorking && (
+          <>
+            <label>University</label>
+            <input
+              type="text"
+              placeholder="e.g. TARUMT"
+              value={form.org}
+              onChange={(e) => setForm({ ...form, org: e.target.value })}
+              required
+            />
 
-        <label>{progLabel}</label>
-        <input
-          type="text"
-          placeholder="e.g. B.Sc Computer Science / Software Engineer"
-          value={form.program}
-          onChange={(e) => setForm({ ...form, program: e.target.value })}
-          required
-        />
+            <label>Program</label>
+            <input
+              type="text"
+              placeholder="e.g. B.Sc Computer Science / Software Engineer"
+              value={form.program}
+              onChange={(e) => setForm({ ...form, program: e.target.value })}
+              required
+            />
+          </>
+        )}
 
         <label>Resume (PDF only — 1 file)</label>
         <div className="file-row">

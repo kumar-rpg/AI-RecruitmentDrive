@@ -299,8 +299,8 @@ export default function DashboardClient({ initialApplicants, initialPositions, u
                     <td>{a.phone}</td>
                     <td>{a.position}</td>
                     <td>{CATEGORY_LABEL[a.category]}</td>
-                    <td>{a.org}</td>
-                    <td>{a.program_or_role}</td>
+                    <td>{a.org || '—'}</td>
+                    <td>{a.program_or_role || '—'}</td>
                     <td>
                       <span
                         className="pill ok"

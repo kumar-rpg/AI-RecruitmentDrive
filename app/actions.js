@@ -60,9 +60,7 @@ export async function submitApplication(payload) {
     !email?.trim() ||
     !phone?.trim() ||
     !position?.trim() ||
-    !VALID_CATEGORIES.includes(category) ||
-    !org?.trim() ||
-    !program?.trim()
+    !VALID_CATEGORIES.includes(category)
   ) {
     throw new Error('Missing required fields.');
   }
@@ -71,6 +69,9 @@ export async function submitApplication(payload) {
   }
   if (!PHONE_PATTERN.test(phone.trim())) {
     throw new Error('Phone number must be in the format 016-4028507.');
+  }
+  if (category !== 'working' && (!org?.trim() || !program?.trim())) {
+    throw new Error('University and Program are required for this category.');
   }
   if (!resumePath) {
     throw new Error('Resume was not uploaded.');
