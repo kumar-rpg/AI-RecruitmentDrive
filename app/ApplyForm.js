@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import ThemeToggle from '@/components/ThemeToggle';
 import { supabaseBrowser } from '@/lib/supabaseClient';
 import { getUploadTargets, submitApplication } from './actions';
@@ -32,12 +33,12 @@ function formatPhone(raw) {
 }
 
 export default function ApplyForm({ positions }) {
+  const router = useRouter();
   const [form, setForm] = useState(initialForm);
   const [resumeFile, setResumeFile] = useState(null);
   const [transcriptFile, setTranscriptFile] = useState(null);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const [success, setSuccess] = useState(false);
 
   const isWorking = form.category === 'working';
 
@@ -160,14 +161,9 @@ export default function ApplyForm({ positions }) {
         transcriptPath,
       });
 
-      setSuccess(true);
-      setForm(initialForm);
-      setResumeFile(null);
-      setTranscriptFile(null);
-      setTimeout(() => setSuccess(false), 5000);
+      router.push('/thank-you');
     } catch (err) {
       setError(err.message || 'Something went wrong. Please try again.');
-    } finally {
       setSubmitting(false);
     }
   }
@@ -317,10 +313,6 @@ export default function ApplyForm({ positions }) {
         <button className="primary" type="submit" disabled={submitting || positions.length === 0}>
           {submitting ? 'Submitting…' : 'Submit Application'}
         </button>
-
-        {success && (
-          <div className="success-box">✅ Submitted — thanks, we will be in touch.</div>
-        )}
       </form>
     </div>
   );
