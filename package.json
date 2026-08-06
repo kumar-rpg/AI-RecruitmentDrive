@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "setup": "node scripts/setup.mjs",
+    "verify": "node scripts/setup.mjs --skip-install --skip-build",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
