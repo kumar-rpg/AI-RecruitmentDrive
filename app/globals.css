@@ -87,6 +87,34 @@ select.status {
   color: var(--accent2); padding: 14px 16px; border-radius: 8px; margin-top: 16px; font-size: 0.9rem;
 }
 
+/* Pre-application splash */
+.splash-overlay {
+  position: fixed; inset: 0; z-index: 50; overflow-y: auto;
+  background: var(--bg); padding: 32px 20px;
+  display: flex; align-items: flex-start; justify-content: center;
+}
+.splash-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+  padding: 28px; max-width: 560px; width: 100%; margin: auto;
+}
+.splash-card h1 { margin-bottom: 4px; }
+.splash-intro { font-size: 1rem; margin: 22px 0 0; }
+.splash-lead { color: var(--muted); font-size: 0.9rem; margin: 8px 0 22px; }
+.splash-req {
+  border: 1px solid var(--border); border-radius: 8px;
+  padding: 14px 16px; margin-bottom: 12px; background: var(--input-bg);
+}
+.splash-req h2 { font-size: 0.95rem; margin: 0; color: var(--accent); }
+.splash-req-note { font-size: 0.82rem; color: var(--muted); margin: 6px 0 0; }
+.splash-req ol, .splash-req ul { margin: 8px 0 0; padding-left: 20px; font-size: 0.9rem; }
+.splash-req li { margin-bottom: 4px; }
+.splash-req li:last-child { margin-bottom: 0; }
+.splash-note {
+  font-size: 0.82rem; color: var(--muted); margin: 18px 0 0;
+  padding-top: 14px; border-top: 1px solid var(--border);
+}
+.splash-card button.primary { width: 100%; }
+
 /* Dashboard overview gauges */
 .stats-panel { display: flex; gap: 28px; align-items: center; flex-wrap: wrap; }
 .gauge { position: relative; width: 130px; height: 130px; flex-shrink: 0; }

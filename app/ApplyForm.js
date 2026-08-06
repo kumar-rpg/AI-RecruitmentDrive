@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import ThemeToggle from '@/components/ThemeToggle';
+import Splash from './Splash';
 import { supabaseBrowser } from '@/lib/supabaseClient';
 import { getUploadTargets, submitApplication } from './actions';
 
@@ -41,6 +42,7 @@ export default function ApplyForm({ positions }) {
   const [transcriptFile, setTranscriptFile] = useState(null);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [showSplash, setShowSplash] = useState(true);
 
   const isWorking = form.category === 'working';
   const isIntern = form.category === 'intern';
@@ -181,6 +183,10 @@ export default function ApplyForm({ positions }) {
       setError(err.message || 'Something went wrong. Please try again.');
       setSubmitting(false);
     }
+  }
+
+  if (showSplash) {
+    return <Splash onStart={() => setShowSplash(false)} />;
   }
 
   return (
