@@ -20,8 +20,8 @@ param(
 $ErrorActionPreference = 'Stop'
 Set-Location -Path $PSScriptRoot
 
-$minMajor = 18
-$minMinor = 17
+$minMajor = 20
+$minMinor = 9
 
 $node = Get-Command node -ErrorAction SilentlyContinue
 if (-not $node) {
@@ -39,7 +39,7 @@ $major = [int]$parts[0]
 $minor = [int]$parts[1]
 
 if ($major -lt $minMajor -or ($major -eq $minMajor -and $minor -lt $minMinor)) {
-    Write-Host "ERROR: Node $nodeVersion is too old. Next.js 14 needs $minMajor.$minMinor+." -ForegroundColor Red
+    Write-Host "ERROR: Node $nodeVersion is too old. Next.js 16 needs $minMajor.$minMinor+." -ForegroundColor Red
     Write-Host 'Install the current LTS from https://nodejs.org and re-run.'
     exit 1
 }

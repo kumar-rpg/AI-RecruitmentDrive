@@ -269,6 +269,47 @@ document to hand.
   their document requirements are identical; the internship dates remain as
   an intern-only line item.
 
+## 17. Next.js 14 -> 16 upgrade (branch `upgrade/nextjs-16`)
+
+The setup script's `npm audit` step surfaced 2 high-severity advisories
+against Next.js 14 and its bundled PostCSS — 20+ CVEs covering DoS, cache
+poisoning, SSRF and XSS. The only fix was a major version bump, so it was
+done on a branch rather than straight onto `main`.
+
+**Versions:** `next` 14.2.35 -> 16.3.0, `react` / `react-dom` 18.3.1 -> 19.2.8.
+Result: **0 vulnerabilities.**
+
+**Breaking changes that actually affected this codebase — two:**
+
+1. **`cookies()` became async** in Next 15. `lib/supabaseServer.js` was the
+   only caller, so `supabaseServer()` itself became `async`, and its three
+   call sites (`app/dashboard/page.js`, and twice in
+   `app/dashboard/actions.js`) now `await` it.
+2. **The `middleware` file convention was deprecated** in Next 16 in favour
+   of `proxy`. `middleware.js` was renamed to `proxy.js` and its exported
+   function from `middleware` to `proxy`. Behaviour is unchanged — same
+   session refresh, same `/dashboard` gate, same matcher.
+
+**Node floor raised** from 18.17 to 20.9 (Next 16's engine requirement),
+updated in `scripts/setup.mjs`, `setup.sh`, `setup.ps1`, `docs/SETUP.md`,
+and pinned via an `engines` field in `package.json`.
+
+**Not changed, deliberately:** the `cache: 'no-store'` fetch override in
+`lib/supabaseAdmin.js` (see §9). Next 15 flipped the default so fetches are
+no longer cached, which makes the override redundant — but it is still
+correct, costs nothing, and keeps the fix explicit rather than dependent on
+a framework default that has already changed once.
+
+**Verified:** production build clean with no warnings; `/thank-you` and
+`/login` return 200; `/dashboard` correctly 307-redirects to `/login`,
+which exercises the renamed proxy *and* the `@supabase/ssr` auth path
+end-to-end; React 19 client hydration confirmed by toggling the theme and
+seeing state, DOM and localStorage all update; server log clean.
+
+Not verified without production credentials: a real form submission, file
+upload to Storage, and an authenticated dashboard session. Those need a
+smoke test against the live Supabase project before merging.
+
 ---
 
 ## Where things stand

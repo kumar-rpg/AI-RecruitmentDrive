@@ -24,7 +24,7 @@ import process from 'node:process';
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const ENV_FILE = join(ROOT, '.env.local');
-const MIN_NODE = [18, 17, 0];
+const MIN_NODE = [20, 9, 0];
 const BUCKET = 'applications';
 
 const argv = new Set(process.argv.slice(2));
@@ -198,7 +198,7 @@ function checkNode() {
       (cur[1] > MIN_NODE[1] || (cur[1] === MIN_NODE[1] && cur[2] >= MIN_NODE[2])));
   if (!good) {
     throw new SetupError(
-      `Node ${process.versions.node} is too old - Next.js 14 needs ${MIN_NODE.join('.')}+.`,
+      `Node ${process.versions.node} is too old - Next.js 16 needs ${MIN_NODE.join('.')}+.`,
       'Install the current LTS from https://nodejs.org and re-run.'
     );
   }
