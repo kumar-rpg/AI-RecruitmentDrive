@@ -14,6 +14,8 @@ const initialForm = {
   org: '',
   program: '',
   position: '',
+  internStart: '',
+  internEnd: '',
 };
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const NAME_PATTERN = /^[A-Za-z]+(?:\s[A-Za-z]+)*$/;
@@ -41,6 +43,7 @@ export default function ApplyForm({ positions }) {
   const [submitting, setSubmitting] = useState(false);
 
   const isWorking = form.category === 'working';
+  const isIntern = form.category === 'intern';
 
   function isPDF(file) {
     if (!file) return false;
@@ -109,6 +112,16 @@ export default function ApplyForm({ positions }) {
         return;
       }
     }
+    if (isIntern) {
+      if (!form.internStart || !form.internEnd) {
+        setError('Please provide both an Internship Start Date and End Date.');
+        return;
+      }
+      if (new Date(form.internEnd) <= new Date(form.internStart)) {
+        setError('Internship End Date must be after the Start Date.');
+        return;
+      }
+    }
     if (!resumeFile) {
       setError('Resume is required.');
       return;
@@ -157,6 +170,8 @@ export default function ApplyForm({ positions }) {
         category: form.category,
         org: isWorking ? '' : form.org,
         program: isWorking ? '' : form.program,
+        internStart: isIntern ? form.internStart : '',
+        internEnd: isIntern ? form.internEnd : '',
         resumePath: targets.resume.path,
         transcriptPath,
       });
@@ -251,6 +266,8 @@ export default function ApplyForm({ positions }) {
                     category: opt.val,
                     org: opt.val === 'working' ? '' : form.org,
                     program: opt.val === 'working' ? '' : form.program,
+                    internStart: opt.val === 'intern' ? form.internStart : '',
+                    internEnd: opt.val === 'intern' ? form.internEnd : '',
                   })
                 }
                 required
@@ -259,6 +276,26 @@ export default function ApplyForm({ positions }) {
             </label>
           ))}
         </div>
+
+        {isIntern && (
+          <>
+            <label>Internship Start Date</label>
+            <input
+              type="date"
+              value={form.internStart}
+              onChange={(e) => setForm({ ...form, internStart: e.target.value })}
+              required
+            />
+
+            <label>Internship End Date</label>
+            <input
+              type="date"
+              value={form.internEnd}
+              onChange={(e) => setForm({ ...form, internEnd: e.target.value })}
+              required
+            />
+          </>
+        )}
 
         {!isWorking && (
           <>

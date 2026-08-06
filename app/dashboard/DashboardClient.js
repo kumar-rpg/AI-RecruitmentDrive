@@ -89,6 +89,8 @@ export default function DashboardClient({ initialApplicants, initialPositions, u
       'Category',
       'University/Employer',
       'Program/Role',
+      'Internship Start',
+      'Internship End',
       'Status',
       'Submitted At',
     ];
@@ -100,6 +102,8 @@ export default function DashboardClient({ initialApplicants, initialPositions, u
       CATEGORY_LABEL[a.category],
       a.org,
       a.program_or_role,
+      a.internship_start_date,
+      a.internship_end_date,
       a.status,
       a.submitted_at,
     ]);
@@ -269,6 +273,8 @@ export default function DashboardClient({ initialApplicants, initialPositions, u
                 <th>Category</th>
                 <th>University/Employer</th>
                 <th>Program/Role</th>
+                <th>Internship Start</th>
+                <th>Internship End</th>
                 <th>Resume</th>
                 <th>Transcript</th>
                 <th></th>
@@ -301,6 +307,8 @@ export default function DashboardClient({ initialApplicants, initialPositions, u
                     <td>{CATEGORY_LABEL[a.category]}</td>
                     <td>{a.org || '—'}</td>
                     <td>{a.program_or_role || '—'}</td>
+                    <td>{a.internship_start_date || '—'}</td>
+                    <td>{a.internship_end_date || '—'}</td>
                     <td>
                       <span
                         className="pill ok"

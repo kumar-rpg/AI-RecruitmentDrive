@@ -51,8 +51,20 @@ export async function getUploadTargets(category) {
 // straight to Storage. This just logs the metadata row — no file bytes pass
 // through here, so it's a small, fast request safe for any Vercel plan.
 export async function submitApplication(payload) {
-  const { id, name, email, phone, position, category, org, program, resumePath, transcriptPath } =
-    payload;
+  const {
+    id,
+    name,
+    email,
+    phone,
+    position,
+    category,
+    org,
+    program,
+    internStart,
+    internEnd,
+    resumePath,
+    transcriptPath,
+  } = payload;
 
   if (
     !id ||
@@ -72,6 +84,14 @@ export async function submitApplication(payload) {
   }
   if (category !== 'working' && (!org?.trim() || !program?.trim())) {
     throw new Error('University and Program are required for this category.');
+  }
+  if (category === 'intern') {
+    if (!internStart || !internEnd) {
+      throw new Error('Internship Start Date and End Date are required.');
+    }
+    if (new Date(internEnd) <= new Date(internStart)) {
+      throw new Error('Internship End Date must be after the Start Date.');
+    }
   }
   if (!resumePath) {
     throw new Error('Resume was not uploaded.');
@@ -101,6 +121,8 @@ export async function submitApplication(payload) {
     category,
     org: org.trim(),
     program_or_role: program.trim(),
+    internship_start_date: category === 'intern' ? internStart : null,
+    internship_end_date: category === 'intern' ? internEnd : null,
     resume_path: resumePath,
     transcript_path: category === 'working' ? null : transcriptPath,
     status: 'New',

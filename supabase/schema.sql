@@ -26,6 +26,8 @@ create table if not exists public.applicants (
   org text not null,
   program_or_role text not null,
   position text not null,
+  internship_start_date date,
+  internship_end_date date,
   resume_path text not null,
   transcript_path text,
   status text not null default 'New' check (status in ('New', 'Reviewing', 'Shortlisted', 'Rejected')),
