@@ -18,24 +18,18 @@ export default function Splash({ onStart }) {
         </p>
 
         <div className="splash-req">
-          <h2>Applying as an Intern</h2>
-          <p className="splash-req-note">Three things to have ready:</p>
+          <h2>Applying as an Intern, or Graduating / Job-seeking</h2>
+          <p className="splash-req-note">Have these ready:</p>
           <ol>
-            <li>Your resume</li>
-            <li>Your results transcript</li>
-            <li>The start date and end date of your internship</li>
-          </ol>
-        </div>
-
-        <div className="splash-req">
-          <h2>Graduating / Job-seeking</h2>
-          <ul>
             <li>Your resume</li>
             <li>
               Your results transcript, covering everything from the commencement of
               your program
             </li>
-          </ul>
+            <li>
+              Interns only — the start date and end date of your internship
+            </li>
+          </ol>
         </div>
 
         <div className="splash-req">
