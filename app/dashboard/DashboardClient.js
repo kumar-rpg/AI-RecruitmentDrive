@@ -18,7 +18,10 @@ const STATUSES = ['New', 'Reviewing', 'Shortlisted', 'Rejected'];
 function formatDate(dateStr) {
   if (!dateStr) return '—';
   const date = new Date(dateStr + 'T00:00:00Z');
-  return date.toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' });
+  const day = date.getUTCDate();
+  const month = date.toLocaleString('en-US', { month: 'long', timeZone: 'UTC' });
+  const year = date.getUTCFullYear();
+  return `${day} ${month} ${year}`;
 }
 
 export default function DashboardClient({ initialApplicants, initialPositions, userEmail }) {
