@@ -86,3 +86,33 @@ select.status {
   background: rgba(126,231,135,0.1); border: 1px solid rgba(126,231,135,0.3);
   color: var(--accent2); padding: 14px 16px; border-radius: 8px; margin-top: 16px; font-size: 0.9rem;
 }
+
+/* Dashboard overview gauges */
+.stats-panel { display: flex; gap: 28px; align-items: center; flex-wrap: wrap; }
+.gauge { position: relative; width: 130px; height: 130px; flex-shrink: 0; }
+.gauge svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.gauge circle { fill: none; stroke-width: 12; }
+.gauge .gauge-track { stroke: var(--input-bg); }
+.gauge-center {
+  position: absolute; inset: 0; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; text-align: center; gap: 2px;
+}
+.gauge-center strong { font-size: 1.9rem; line-height: 1; }
+.gauge-center span { font-size: 0.7rem; color: var(--muted); }
+.stat-rows { flex: 1; min-width: 260px; }
+.stat-total {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding-bottom: 10px; margin-bottom: 10px; border-bottom: 1px solid var(--border);
+}
+.stat-total span { color: var(--muted); font-size: 0.85rem; }
+.stat-total strong { font-size: 1.3rem; }
+.stat-row { display: flex; align-items: center; gap: 10px; padding: 5px 0; font-size: 0.85rem; }
+.stat-row .dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.stat-label { color: var(--muted); width: 88px; flex-shrink: 0; }
+.stat-count { font-weight: 600; width: 28px; text-align: right; flex-shrink: 0; }
+.stat-bar {
+  flex: 1; height: 6px; background: var(--input-bg);
+  border-radius: 999px; overflow: hidden; min-width: 60px;
+}
+.stat-bar > span { display: block; height: 100%; border-radius: 999px; }
+.stat-pct { color: var(--muted); font-size: 0.78rem; width: 34px; text-align: right; flex-shrink: 0; }
