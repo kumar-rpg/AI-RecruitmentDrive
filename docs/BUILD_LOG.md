@@ -169,17 +169,138 @@ Supabase client that forces `cache: 'no-store'` on every request the admin
 client makes, network-wide, closing off the caching layer at its source
 instead of relying on route-level configuration alone.
 
+## 10. Input validation rules — commits `03e59e0` and `6bef326` (2026-07-31)
+
+Tightened every field on the form, with each rule enforced twice: once in
+the browser for fast feedback, once again inside `submitApplication()`
+because a Server Action is a separately callable endpoint and client-side
+checks can be bypassed.
+
+- **Full Name** — letters and single spaces only. Non-letter characters are
+  stripped live as the applicant types, rather than rejected on submit.
+- **Mobile No.** — digits only, with a hyphen inserted automatically after
+  the third digit (typing `0164028507` becomes `016-4028507`), validated
+  against that exact shape.
+- **Position** — the placeholder option was made non-selectable and the
+  `<select>` marked `required`.
+- **Category radios, University, Program** — marked `required`, and the one
+  bundled "please fill in all fields" message was split into a specific
+  message per field.
+
+## 11. Simplify the form for working applicants — commit `1d62dc5` (2026-08-04)
+
+Previously the University and Program fields were merely *relabelled* to
+"Current Employer" and "Current Role" for already-working applicants. They
+are now hidden outright — that group only supplies name, email, mobile,
+position and a resume.
+
+- Fields are cleared if an applicant fills them in and then switches
+  category, so stale values can't be submitted.
+- The server no longer requires `org` / `program` when category is
+  `working`.
+- The dashboard shows `—` in those two columns rather than empty cells.
+
+## 12. Thank You page — commit `a0004e5` (2026-08-04)
+
+The inline success banner was replaced with a dedicated `/thank-you` route:
+confirms receipt, tells the applicant to watch their inbox (and spam
+folder), and offers a link back to submit another application. On success
+the form now navigates there via `router.push()` instead of resetting
+itself in place.
+
+## 13. Internship dates — commit `00e5f3e` (2026-08-06)
+
+Two date pickers, shown only when "Studying — Intern" is selected:
+
+- **Internship Start Date** and **Internship End Date**, both required,
+  with end-after-start validated client- and server-side.
+- Cleared automatically if the applicant switches away from Intern.
+- Stored as `internship_start_date` / `internship_end_date` (nullable
+  `date` columns, since they only apply to one category) —
+  `supabase/migrations/004_add_internship_dates.sql`.
+- Added to the dashboard table and the CSV export.
+
+## 14. Date display format — commits `1f08fab` and `fc91d9b` (2026-08-06)
+
+Dates were rendering in ISO form (`2026-09-01`). The first attempt used
+`toLocaleDateString('en-US', …)`, which puts the month first — so the
+output was still wrong. The fix builds the string explicitly from
+`getUTCDate()` / month name / `getUTCFullYear()`, giving `1 September 2026`
+regardless of the viewer's locale. Parsing pins to UTC so a date never
+shifts by a day depending on the reviewer's timezone.
+
+## 15. Dashboard overview gauges — commit `304807f` (2026-08-06)
+
+A new `app/dashboard/StatsPanel.js` at the top of the dashboard:
+
+- A **segmented donut ring** where each status occupies an arc proportional
+  to its share, so the whole breakdown is legible at a glance. Built as
+  four SVG circles sharing one radius, each with a `stroke-dasharray` sized
+  to its slice and a `stroke-dashoffset` placing it where the previous arc
+  ended.
+- **"New" is drawn in the muted colour**, so the coloured portion of the
+  ring *is* the reviewed portion — no arithmetic needed to read the
+  backlog. The centre shows the reviewed count out of the total.
+- A **legend** beside it: total applicants, then per-status count,
+  proportional bar and percentage.
+- It reads the same client state the table does, so changing a status in
+  the table updates the gauges instantly without a reload.
+- Deliberately reflects **all** applicants rather than the filtered set:
+  the gauges sit above the filter controls, so a number silently changing
+  in response to a control further down the page would be easy to miss.
+
+## 16. Pre-application splash screen — commits `ed22b12`, `fd62e4c`, `9dfef3d` (2026-08-06)
+
+Applicants now land on a preparation screen before the form, so nobody
+starts filling it in only to discover mid-way that they don't have a
+document to hand.
+
+- Thanks the applicant, then lists what to have ready per category:
+  interns and graduating applicants need a resume plus a transcript
+  covering their program from commencement, with interns additionally
+  needing their internship start and end dates; already-working applicants
+  need only a resume.
+- Closes with the PDF-only and one-file-per-upload constraints — the two
+  most common causes of a stalled submission.
+- Implemented as a gate on the existing `/` route rather than a new
+  `/welcome` page, so the link already shared with applicants shows it. A
+  separate route would have been skipped by anyone using the old link.
+- The two student categories were merged into one block after review, since
+  their document requirements are identical; the internship dates remain as
+  an intern-only line item.
+
 ---
 
 ## Where things stand
 
 - **Public link:** the deployed Vercel URL's root (`/`) — share this with
-  applicants.
+  applicants. They see the splash screen, then the form.
 - **Admin dashboard:** the same domain plus `/dashboard`, gated by Supabase
-  Auth login.
+  Auth login. Overview gauges at the top, then Manage Positions, then the
+  applicants table.
 - **To open/close a role or add a new one:** log into `/dashboard` and use
   the "Manage Positions" panel — no code changes or redeploys needed.
 - **Migrations applied so far, in order** (all under `supabase/migrations/`,
   plus the consolidated `supabase/schema.sql` for fresh installs):
   1. `002_add_email_phone.sql`
   2. `003_add_positions.sql`
+  3. `004_add_internship_dates.sql`
+
+### What gets collected, by category
+
+| | Intern | Graduating | Already Working |
+|---|---|---|---|
+| Name, email, mobile, position | ✓ | ✓ | ✓ |
+| University + Program | ✓ | ✓ | — |
+| Internship start / end dates | ✓ | — | — |
+| Resume (PDF) | ✓ | ✓ | ✓ |
+| Academic transcript (PDF) | ✓ | ✓ | — |
+
+### Routes
+
+| Route | Access | Purpose |
+|---|---|---|
+| `/` | public | Splash screen, then the application form |
+| `/thank-you` | public | Post-submission confirmation |
+| `/login` | public | Admin sign-in |
+| `/dashboard` | admin only | Gauges, position management, applicant review |
