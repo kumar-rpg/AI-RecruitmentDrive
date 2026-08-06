@@ -18,7 +18,7 @@ export default function Splash({ onStart }) {
         </p>
 
         <div className="splash-req">
-          <h2>Applying as an Intern, or Graduating / Job-seeking</h2>
+          <h2>Applying as an Intern, or Graduating</h2>
           <p className="splash-req-note">Have these ready:</p>
           <ol>
             <li>Your resume</li>
