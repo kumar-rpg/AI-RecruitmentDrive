@@ -4,7 +4,10 @@ import { NextResponse } from 'next/server';
 // Refreshes the Supabase auth session cookie on every request and blocks
 // unauthenticated visitors from the /dashboard route. The public application
 // form at "/" is left untouched — that's the link you share with applicants.
-export async function middleware(request) {
+//
+// Named "proxy" and living in proxy.js because Next.js 16 deprecated the
+// "middleware" file convention in favour of this one. Behaviour is unchanged.
+export async function proxy(request) {
   let response = NextResponse.next({ request });
 
   const supabase = createServerClient(

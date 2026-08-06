@@ -8,8 +8,8 @@ set -euo pipefail
 
 cd "$(dirname "$0")"
 
-MIN_MAJOR=18
-MIN_MINOR=17
+MIN_MAJOR=20
+MIN_MINOR=9
 
 if ! command -v node >/dev/null 2>&1; then
   echo "ERROR: Node.js is not installed (or not on PATH)."
@@ -28,7 +28,7 @@ NODE_MINOR="${NODE_REST%%.*}"
 
 if [ "$NODE_MAJOR" -lt "$MIN_MAJOR" ] ||
    { [ "$NODE_MAJOR" -eq "$MIN_MAJOR" ] && [ "$NODE_MINOR" -lt "$MIN_MINOR" ]; }; then
-  echo "ERROR: Node $NODE_VERSION is too old. Next.js 14 needs ${MIN_MAJOR}.${MIN_MINOR}+."
+  echo "ERROR: Node $NODE_VERSION is too old. Next.js 16 needs ${MIN_MAJOR}.${MIN_MINOR}+."
   echo "Install the current LTS from https://nodejs.org and re-run."
   exit 1
 fi

@@ -29,7 +29,7 @@ anything, so a second run just reports what's already in place.
 
 | # | Step | Fails the run? | Fixes it for you? |
 |---|---|---|---|
-| 1 | Node.js is installed and >= 18.17 | yes | no — tells you where to get it |
+| 1 | Node.js is installed and >= 20.9 | yes | no — tells you where to get it |
 | 2 | `npm` present, `git` present | yes / warn only | no |
 | 3 | `npm ci` (or `npm install`), then verifies all 5 runtime packages resolved | yes | yes |
 | 4 | `npm audit` for known vulnerabilities | no — warns | no |
@@ -122,7 +122,7 @@ Exit code is `0` only if every fail-the-run step passed.
 
 | Symptom | Cause |
 |---|---|
-| `Node ... is too old` | Next.js 14 needs 18.17+. Install the current LTS. |
+| `Node ... is too old` | Next.js 16 needs 20.9+. Install the current LTS. |
 | `Supabase rejected the service role key` | The anon key and service key got swapped, or the key was truncated on copy. |
 | `Could not reach Supabase: fetch failed` | Wrong project URL, no network, or the project is paused (free projects pause after inactivity). |
 | `Database schema is incomplete` | Migrations not applied — see above. |

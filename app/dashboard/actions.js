@@ -11,7 +11,7 @@ const VALID_STATUSES = ['New', 'Reviewing', 'Shortlisted', 'Rejected'];
 // /dashboard, but Server Actions are separately callable endpoints, so every
 // action here re-checks that a real admin session is attached to the request.
 async function requireAdmin() {
-  const supabase = supabaseServer();
+  const supabase = await supabaseServer();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -82,7 +82,7 @@ export async function deletePosition(id) {
 }
 
 export async function signOut() {
-  const supabase = supabaseServer();
+  const supabase = await supabaseServer();
   await supabase.auth.signOut();
   redirect('/login');
 }
