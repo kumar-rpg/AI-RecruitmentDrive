@@ -15,6 +15,12 @@ import {
 const CATEGORY_LABEL = { intern: 'Intern', grad: 'Grad / Job-seeking', working: 'Already Working' };
 const STATUSES = ['New', 'Reviewing', 'Shortlisted', 'Rejected'];
 
+function formatDate(dateStr) {
+  if (!dateStr) return '—';
+  const date = new Date(dateStr + 'T00:00:00Z');
+  return date.toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' });
+}
+
 export default function DashboardClient({ initialApplicants, initialPositions, userEmail }) {
   const [applicants, setApplicants] = useState(initialApplicants);
   const [positions, setPositions] = useState(initialPositions);
@@ -102,8 +108,8 @@ export default function DashboardClient({ initialApplicants, initialPositions, u
       CATEGORY_LABEL[a.category],
       a.org,
       a.program_or_role,
-      a.internship_start_date,
-      a.internship_end_date,
+      formatDate(a.internship_start_date),
+      formatDate(a.internship_end_date),
       a.status,
       a.submitted_at,
     ]);
@@ -307,8 +313,8 @@ export default function DashboardClient({ initialApplicants, initialPositions, u
                     <td>{CATEGORY_LABEL[a.category]}</td>
                     <td>{a.org || '—'}</td>
                     <td>{a.program_or_role || '—'}</td>
-                    <td>{a.internship_start_date || '—'}</td>
-                    <td>{a.internship_end_date || '—'}</td>
+                    <td>{formatDate(a.internship_start_date)}</td>
+                    <td>{formatDate(a.internship_end_date)}</td>
                     <td>
                       <span
                         className="pill ok"
