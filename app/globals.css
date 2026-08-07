@@ -144,3 +144,39 @@ select.status {
 }
 .stat-bar > span { display: block; height: 100%; border-radius: 999px; }
 .stat-pct { color: var(--muted); font-size: 0.78rem; width: 34px; text-align: right; flex-shrink: 0; }
+
+/* Applications by position — ranked bars, one hue (bar length is the number) */
+.pos-total {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
+  padding-bottom: 10px; margin-bottom: 4px; border-bottom: 1px solid var(--border);
+}
+.pos-total span { color: var(--muted); font-size: 0.85rem; }
+.pos-total strong { font-size: 1.3rem; }
+/* 2px gap between adjacent bars, per mark spec — not a border */
+.pos-rows { display: flex; flex-direction: column; gap: 2px; }
+.pos-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 7px 0; font-size: 0.85rem; min-height: 24px;
+}
+.pos-name {
+  flex: 1; min-width: 130px; display: flex; align-items: center; gap: 6px;
+  overflow-wrap: anywhere;
+}
+.pos-count { font-weight: 600; width: 28px; text-align: right; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+.pos-bar {
+  width: 42%; min-width: 80px; flex-shrink: 0; height: 8px;
+  background: var(--input-bg); border-radius: 999px; overflow: hidden;
+}
+.pos-bar > span {
+  display: block; height: 100%; background: var(--accent);
+  border-radius: 999px; /* 4px+ rounded data-end */
+  transition: width 0.2s ease;
+}
+.pos-bar > span.dim { background: var(--muted); }
+.pos-pct {
+  color: var(--muted); font-size: 0.78rem; width: 34px; text-align: right;
+  flex-shrink: 0; font-variant-numeric: tabular-nums;
+}
+@media (max-width: 560px) {
+  .pos-bar { width: 30%; min-width: 60px; }
+}

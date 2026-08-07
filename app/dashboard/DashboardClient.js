@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 import ThemeToggle from '@/components/ThemeToggle';
 import StatsPanel from './StatsPanel';
+import PositionsPanel from './PositionsPanel';
 import {
   updateStatus,
   deleteApplicant,
@@ -181,6 +182,8 @@ export default function DashboardClient({ initialApplicants, initialPositions, u
       </header>
 
       <StatsPanel applicants={applicants} />
+
+      <PositionsPanel applicants={applicants} positions={positions} />
 
       <div className="card">
         <label>Manage Positions</label>
