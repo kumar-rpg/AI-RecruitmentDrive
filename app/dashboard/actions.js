@@ -7,7 +7,9 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin';
 import { validateApplicant } from '@/lib/validation';
 
 const BUCKET = 'applications';
-const VALID_STATUSES = ['New', 'Reviewing', 'Shortlisted', 'Rejected'];
+// Must stay in step with the CHECK constraint on applicants.status
+// (supabase/migrations/005_add_hired_status.sql).
+const VALID_STATUSES = ['New', 'Reviewing', 'Shortlisted', 'Hired', 'Rejected'];
 
 // Defense in depth: middleware.js already blocks unauthenticated visits to
 // /dashboard, but Server Actions are separately callable endpoints, so every

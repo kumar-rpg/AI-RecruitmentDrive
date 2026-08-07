@@ -2,10 +2,12 @@
 
 // "New" is the un-reviewed state — everything past it counts as reviewed, so
 // the grey arc on the ring is exactly the portion still waiting on you.
+// Pipeline order, so the ring reads left-to-right as a funnel.
 const STATUS_META = [
   { key: 'New', color: 'var(--muted)' },
   { key: 'Reviewing', color: 'var(--accent)' },
   { key: 'Shortlisted', color: 'var(--accent2)' },
+  { key: 'Hired', color: 'var(--hired)' },
   { key: 'Rejected', color: 'var(--danger)' },
 ];
 

@@ -1,11 +1,13 @@
 :root {
   --bg: #0f1115; --card: #171a21; --text: #e8e9ec; --muted: #9aa0ac;
   --accent: #5b8cff; --accent2: #7ee787; --danger: #ff6b6b; --warn: #f5c451;
+  --hired: #b39dff;
   --border: rgba(255,255,255,0.08); --input-bg: #0d0f13;
 }
 :root[data-theme="light"] {
   --bg: #f5f6f8; --card: #ffffff; --text: #1a1d23; --muted: #5b6270;
   --accent: #3b6fe0; --accent2: #1f9d55; --danger: #d92d2d; --warn: #b3800a;
+  --hired: #6d4aca;
   --border: rgba(0,0,0,0.1); --input-bg: #f0f1f3;
 }
 * { box-sizing: border-box; }

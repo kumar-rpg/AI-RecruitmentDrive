@@ -381,6 +381,7 @@ const SQL_FILES = [
   'supabase/migrations/002_add_email_phone.sql',
   'supabase/migrations/003_add_positions.sql',
   'supabase/migrations/004_add_internship_dates.sql',
+  'supabase/migrations/005_add_hired_status.sql',
 ];
 
 // Selecting every column the app relies on is a cheap way to prove both the

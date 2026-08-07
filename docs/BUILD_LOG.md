@@ -310,6 +310,27 @@ Not verified without production credentials: a real form submission, file
 upload to Storage, and an authenticated dashboard session. Those need a
 smoke test against the live Supabase project before merging.
 
+## 18. Hired status
+
+Added **Hired** to the status dropdown, between Shortlisted and Rejected so
+the list reads as the pipeline it represents.
+
+`applicants.status` carries a CHECK constraint, so the value had to be
+allowed at the database before the dashboard could save it — otherwise
+picking it fails with a constraint violation.
+`supabase/migrations/005_add_hired_status.sql` drops and re-adds the
+constraint; `schema.sql` is updated for fresh installs. The allowed list now
+lives in three places that must stay in step: the constraint,
+`VALID_STATUSES` in `app/dashboard/actions.js`, and `STATUSES` in
+`DashboardClient.js`.
+
+Hired gets its own colour on the overview ring (`--hired`, violet — light
+`#6d4aca`, dark `#b39dff`) rather than reusing an existing one. Validated
+against both card surfaces: contrast >= 3:1 for all five, worst adjacent CVD
+separation 17.7 light / 15.1 dark, unchanged from the four-status set. The
+reviewed count is still "everything that isn't New", so Hired correctly
+counts as reviewed.
+
 ---
 
 ## Where things stand
@@ -326,6 +347,7 @@ smoke test against the live Supabase project before merging.
   1. `002_add_email_phone.sql`
   2. `003_add_positions.sql`
   3. `004_add_internship_dates.sql`
+  4. `005_add_hired_status.sql`
 
 ### What gets collected, by category
 

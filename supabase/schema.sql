@@ -30,7 +30,8 @@ create table if not exists public.applicants (
   internship_end_date date,
   resume_path text not null,
   transcript_path text,
-  status text not null default 'New' check (status in ('New', 'Reviewing', 'Shortlisted', 'Rejected')),
+  status text not null default 'New'
+    check (status in ('New', 'Reviewing', 'Shortlisted', 'Hired', 'Rejected')),
   submitted_at timestamptz not null default now()
 );
 
