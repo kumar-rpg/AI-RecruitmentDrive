@@ -32,7 +32,7 @@ export default function Splash({ onStart }) {
           </ol>
 
           <div className="splash-callout">
-            <strong>Internship duration is fixed</strong>
+            <strong>Internship Duration</strong>
             <ul>
               <li>Support roles — 3 months</li>
               <li>Engineering roles — exactly 6 months, no more, no less</li>
