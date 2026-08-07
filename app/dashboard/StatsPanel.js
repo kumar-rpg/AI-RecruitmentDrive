@@ -7,6 +7,7 @@ const STATUS_META = [
   { key: 'New', color: 'var(--muted)' },
   { key: 'Reviewing', color: 'var(--accent)' },
   { key: 'Shortlisted', color: 'var(--accent2)' },
+  { key: 'Interview', color: 'var(--interview)' },
   { key: 'Hired', color: 'var(--hired)' },
   { key: 'Rejected', color: 'var(--danger)' },
 ];

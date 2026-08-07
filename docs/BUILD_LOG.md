@@ -348,6 +348,7 @@ counts as reviewed.
   2. `003_add_positions.sql`
   3. `004_add_internship_dates.sql`
   4. `005_add_hired_status.sql`
+  5. `006_add_interview_status.sql`
 
 ### What gets collected, by category
 

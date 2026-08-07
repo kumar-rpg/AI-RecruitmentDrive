@@ -9,7 +9,9 @@ import EditApplicantModal from './EditApplicantModal';
 import { updateStatus, deleteApplicant, getDocUrl, signOut } from './actions';
 
 const CATEGORY_LABEL = { intern: 'Intern', grad: 'Grad / Job-seeking', working: 'Already Working' };
-const STATUSES = ['New', 'Reviewing', 'Shortlisted', 'Hired', 'Rejected'];
+const STATUSES = [
+  'New', 'Reviewing', 'Shortlisted', 'Interview', 'Hired', 'Rejected',
+];
 
 function formatDate(dateStr) {
   if (!dateStr) return '—';
