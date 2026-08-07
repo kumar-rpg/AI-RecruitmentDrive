@@ -1,6 +1,7 @@
 'use server';
 
 import { redirect } from 'next/navigation';
+import { revalidatePath } from 'next/cache';
 import { supabaseServer } from '@/lib/supabaseServer';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
 
@@ -59,6 +60,12 @@ export async function createPosition(title) {
     if (error.code === '23505') throw new Error('A position with that title already exists.');
     throw new Error('Could not create position: ' + error.message);
   }
+
+  // Managing positions now lives on its own page, so the dashboard has to be
+  // invalidated explicitly — otherwise navigating back would show the position
+  // filter and the by-position panel built from a stale cached render.
+  revalidatePath('/dashboard');
+  revalidatePath('/dashboard/positions');
   return { ok: true };
 }
 
@@ -70,6 +77,12 @@ export async function togglePositionActive(id, isActive) {
     .update({ is_active: isActive })
     .eq('id', id);
   if (error) throw new Error('Could not update position: ' + error.message);
+
+  // Managing positions now lives on its own page, so the dashboard has to be
+  // invalidated explicitly — otherwise navigating back would show the position
+  // filter and the by-position panel built from a stale cached render.
+  revalidatePath('/dashboard');
+  revalidatePath('/dashboard/positions');
   return { ok: true };
 }
 
@@ -78,6 +91,12 @@ export async function deletePosition(id) {
 
   const { error } = await supabaseAdmin().from('positions').delete().eq('id', id);
   if (error) throw new Error('Could not delete position: ' + error.message);
+
+  // Managing positions now lives on its own page, so the dashboard has to be
+  // invalidated explicitly — otherwise navigating back would show the position
+  // filter and the by-position panel built from a stale cached render.
+  revalidatePath('/dashboard');
+  revalidatePath('/dashboard/positions');
   return { ok: true };
 }
 
