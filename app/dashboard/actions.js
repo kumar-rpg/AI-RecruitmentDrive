@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { supabaseServer } from '@/lib/supabaseServer';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
+import { validateApplicant } from '@/lib/validation';
 
 const BUCKET = 'applications';
 const VALID_STATUSES = ['New', 'Reviewing', 'Shortlisted', 'Rejected'];
@@ -26,6 +27,53 @@ export async function updateStatus(id, status) {
 
   const { error } = await supabaseAdmin().from('applicants').update({ status }).eq('id', id);
   if (error) throw new Error('Could not update status: ' + error.message);
+  return { ok: true };
+}
+
+export async function updateApplicant(id, payload) {
+  await requireAdmin();
+  if (!id) throw new Error('Missing applicant id.');
+
+  // Same rules the public form enforces — one shared validator, so an admin
+  // edit can never write a record the form itself would have rejected.
+  const problem = validateApplicant(payload);
+  if (problem) throw new Error(problem);
+
+  const { name, email, phone, position, category, org, program, internStart, internEnd } = payload;
+  const admin = supabaseAdmin();
+
+  // The position must still exist. Closed positions are allowed here (unlike on
+  // the public form) so an admin can reassign someone to a role that has since
+  // been closed.
+  const { data: validPosition } = await admin
+    .from('positions')
+    .select('id')
+    .eq('title', position.trim())
+    .maybeSingle();
+  if (!validPosition) {
+    throw new Error(`"${position.trim()}" is not a position on record. Pick one from the list.`);
+  }
+
+  const isWorking = category === 'working';
+  const isIntern = category === 'intern';
+
+  const { error } = await admin
+    .from('applicants')
+    .update({
+      name: name.trim(),
+      email: email.trim(),
+      phone: phone.trim(),
+      position: position.trim(),
+      category,
+      org: isWorking ? '' : org.trim(),
+      program_or_role: isWorking ? '' : program.trim(),
+      internship_start_date: isIntern ? internStart : null,
+      internship_end_date: isIntern ? internEnd : null,
+    })
+    .eq('id', id);
+  if (error) throw new Error('Could not save changes: ' + error.message);
+
+  revalidatePath('/dashboard');
   return { ok: true };
 }
 
@@ -84,6 +132,52 @@ export async function togglePositionActive(id, isActive) {
   revalidatePath('/dashboard');
   revalidatePath('/dashboard/positions');
   return { ok: true };
+}
+
+export async function renamePosition(id, newTitle) {
+  await requireAdmin();
+
+  const trimmed = newTitle?.trim();
+  if (!trimmed) throw new Error('Position title cannot be empty.');
+
+  const admin = supabaseAdmin();
+
+  const { data: current, error: readError } = await admin
+    .from('positions')
+    .select('title')
+    .eq('id', id)
+    .maybeSingle();
+  if (readError) throw new Error('Could not read position: ' + readError.message);
+  if (!current) throw new Error('That position no longer exists.');
+  if (current.title === trimmed) return { ok: true, applicationsUpdated: 0 };
+
+  const { error } = await admin.from('positions').update({ title: trimmed }).eq('id', id);
+  if (error) {
+    if (error.code === '23505') throw new Error('A position with that title already exists.');
+    throw new Error('Could not rename position: ' + error.message);
+  }
+
+  // Applicants store the position as text, not a foreign key, so the rename has
+  // to be carried across by hand or past applications would detach from the
+  // role. Renaming the position first means that if this second step fails, the
+  // applications simply keep the old title (they surface as "Removed" in the
+  // by-position panel) rather than pointing at a title that never existed —
+  // and renaming back recovers it.
+  const { data: moved, error: cascadeError } = await admin
+    .from('applicants')
+    .update({ position: trimmed })
+    .eq('position', current.title)
+    .select('id');
+  if (cascadeError) {
+    throw new Error(
+      `Position renamed, but its existing applications could not be moved: ${cascadeError.message}. ` +
+        `Rename it back to "${current.title}" and try again.`
+    );
+  }
+
+  revalidatePath('/dashboard');
+  revalidatePath('/dashboard/positions');
+  return { ok: true, applicationsUpdated: moved?.length ?? 0 };
 }
 
 export async function deletePosition(id) {

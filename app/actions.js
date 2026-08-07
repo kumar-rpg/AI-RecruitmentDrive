@@ -2,11 +2,10 @@
 
 import { randomUUID } from 'crypto';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
+import { validateApplicant } from '@/lib/validation';
 
 const BUCKET = 'applications';
 const VALID_CATEGORIES = ['intern', 'grad', 'working'];
-const NAME_PATTERN = /^[A-Za-z]+(?:\s[A-Za-z]+)*$/;
-const PHONE_PATTERN = /^\d{3}-\d{4,8}$/;
 
 // Step 1: called before any file is uploaded. Creates a unique application id
 // and short-lived, single-use signed upload URLs so the browser can send the
@@ -66,33 +65,21 @@ export async function submitApplication(payload) {
     transcriptPath,
   } = payload;
 
-  if (
-    !id ||
-    !name?.trim() ||
-    !email?.trim() ||
-    !phone?.trim() ||
-    !position?.trim() ||
-    !VALID_CATEGORIES.includes(category)
-  ) {
-    throw new Error('Missing required fields.');
-  }
-  if (!NAME_PATTERN.test(name.trim())) {
-    throw new Error('Name must contain letters only.');
-  }
-  if (!PHONE_PATTERN.test(phone.trim())) {
-    throw new Error('Phone number must be in the format 016-4028507.');
-  }
-  if (category !== 'working' && (!org?.trim() || !program?.trim())) {
-    throw new Error('University and Program are required for this category.');
-  }
-  if (category === 'intern') {
-    if (!internStart || !internEnd) {
-      throw new Error('Internship Start Date and End Date are required.');
-    }
-    if (new Date(internEnd) <= new Date(internStart)) {
-      throw new Error('Internship End Date must be after the Start Date.');
-    }
-  }
+  if (!id) throw new Error('Missing required fields.');
+
+  const problem = validateApplicant({
+    name,
+    email,
+    phone,
+    position,
+    category,
+    org,
+    program,
+    internStart,
+    internEnd,
+  });
+  if (problem) throw new Error(problem);
+
   if (!resumePath) {
     throw new Error('Resume was not uploaded.');
   }

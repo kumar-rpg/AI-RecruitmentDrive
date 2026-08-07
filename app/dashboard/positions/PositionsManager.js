@@ -3,17 +3,26 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import ThemeToggle from '@/components/ThemeToggle';
-import { createPosition, togglePositionActive, deletePosition } from '../actions';
+import {
+  createPosition,
+  togglePositionActive,
+  deletePosition,
+  renamePosition,
+} from '../actions';
 
 export default function PositionsManager({ initialPositions }) {
   const [positions, setPositions] = useState(initialPositions);
   const [newPositionTitle, setNewPositionTitle] = useState('');
   const [positionError, setPositionError] = useState('');
   const [positionBusyId, setPositionBusyId] = useState(null);
+  const [editingId, setEditingId] = useState(null);
+  const [editingTitle, setEditingTitle] = useState('');
+  const [notice, setNotice] = useState('');
 
   async function handleAddPosition(e) {
     e.preventDefault();
     setPositionError('');
+    setNotice('');
     const title = newPositionTitle.trim();
     if (!title) return;
     try {
@@ -31,6 +40,41 @@ export default function PositionsManager({ initialPositions }) {
       await togglePositionActive(id, isActive);
     } catch (err) {
       alert('Could not update position: ' + err.message);
+    }
+  }
+
+  function startEdit(p) {
+    setPositionError('');
+    setNotice('');
+    setEditingId(p.id);
+    setEditingTitle(p.title);
+  }
+
+  async function handleRename(e) {
+    e.preventDefault();
+    setPositionError('');
+    const title = editingTitle.trim();
+    const original = positions.find((p) => p.id === editingId);
+    if (!title || title === original?.title) {
+      setEditingId(null);
+      return;
+    }
+
+    setPositionBusyId(editingId);
+    try {
+      const res = await renamePosition(editingId, title);
+      setPositions((prev) => prev.map((p) => (p.id === editingId ? { ...p, title } : p)));
+      const n = res?.applicationsUpdated ?? 0;
+      setNotice(
+        n > 0
+          ? `Renamed. ${n} existing application${n === 1 ? '' : 's'} moved to "${title}".`
+          : 'Renamed.'
+      );
+      setEditingId(null);
+    } catch (err) {
+      setPositionError(err.message);
+    } finally {
+      setPositionBusyId(null);
     }
   }
 
@@ -79,6 +123,7 @@ export default function PositionsManager({ initialPositions }) {
           </button>
         </form>
         {positionError && <div className="err">{positionError}</div>}
+        {notice && <div className="success-box">{notice}</div>}
         <div className="hint">
           Positions marked Open appear in the dropdown on the public application form. Click a
           pill to open or close a position.
@@ -96,7 +141,23 @@ export default function PositionsManager({ initialPositions }) {
             <tbody>
               {positions.map((p) => (
                 <tr key={p.id}>
-                  <td>{p.title}</td>
+                  <td>
+                    {editingId === p.id ? (
+                      <input
+                        type="text"
+                        value={editingTitle}
+                        autoFocus
+                        onChange={(e) => setEditingTitle(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') handleRename(e);
+                          if (e.key === 'Escape') setEditingId(null);
+                        }}
+                        style={{ padding: '6px 10px', fontSize: '0.85rem' }}
+                      />
+                    ) : (
+                      p.title
+                    )}
+                  </td>
                   <td>
                     <span
                       className={'pill ' + (p.is_active ? 'ok' : 'na')}
@@ -107,14 +168,48 @@ export default function PositionsManager({ initialPositions }) {
                     </span>
                   </td>
                   <td>
-                    <button
-                      className="ghost"
-                      onClick={() => handleDeletePosition(p.id)}
-                      disabled={positionBusyId === p.id}
-                      type="button"
-                    >
-                      ✕
-                    </button>
+                    <div className="row-actions">
+                      {editingId === p.id ? (
+                        <>
+                          <button
+                            className="ghost"
+                            type="button"
+                            onClick={handleRename}
+                            disabled={positionBusyId === p.id}
+                          >
+                            {positionBusyId === p.id ? 'Saving…' : 'Save'}
+                          </button>
+                          <button
+                            className="ghost"
+                            type="button"
+                            onClick={() => setEditingId(null)}
+                            disabled={positionBusyId === p.id}
+                          >
+                            Cancel
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <button
+                            className="ghost"
+                            type="button"
+                            onClick={() => startEdit(p)}
+                            title={`Rename ${p.title}`}
+                          >
+                            Edit
+                          </button>
+                          <button
+                            className="ghost"
+                            onClick={() => handleDeletePosition(p.id)}
+                            disabled={positionBusyId === p.id}
+                            type="button"
+                            title={`Delete ${p.title}`}
+                          >
+                            ✕
+                          </button>
+                        </>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}

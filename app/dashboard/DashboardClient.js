@@ -5,6 +5,7 @@ import Link from 'next/link';
 import ThemeToggle from '@/components/ThemeToggle';
 import StatsPanel from './StatsPanel';
 import PositionsPanel from './PositionsPanel';
+import EditApplicantModal from './EditApplicantModal';
 import { updateStatus, deleteApplicant, getDocUrl, signOut } from './actions';
 
 const CATEGORY_LABEL = { intern: 'Intern', grad: 'Grad / Job-seeking', working: 'Already Working' };
@@ -27,6 +28,7 @@ export default function DashboardClient({ initialApplicants, initialPositions, u
   const [filterFlag, setFilterFlag] = useState('');
   const [filterPosition, setFilterPosition] = useState('');
   const [busyId, setBusyId] = useState(null);
+  const [editing, setEditing] = useState(null);
 
   const filtered = useMemo(() => {
     const s = search.toLowerCase();
@@ -143,6 +145,18 @@ export default function DashboardClient({ initialApplicants, initialPositions, u
         </div>
       </header>
 
+      {editing && (
+        <EditApplicantModal
+          applicant={editing}
+          positions={positions}
+          onClose={() => setEditing(null)}
+          onSaved={(updated) => {
+            setApplicants((prev) => prev.map((a) => (a.id === updated.id ? updated : a)));
+            setEditing(null);
+          }}
+        />
+      )}
+
       <StatsPanel applicants={applicants} />
 
       <PositionsPanel applicants={applicants} positions={positions} />
@@ -251,14 +265,27 @@ export default function DashboardClient({ initialApplicants, initialPositions, u
                       )}
                     </td>
                     <td>
-                      <button
-                        className="ghost"
-                        onClick={() => handleDelete(a.id)}
-                        disabled={busyId === a.id}
-                        type="button"
-                      >
-                        ✕
-                      </button>
+                      <div className="row-actions">
+                        <button
+                          className="ghost"
+                          onClick={() => setEditing(a)}
+                          type="button"
+                          title={`Edit ${a.name}`}
+                          aria-label={`Edit ${a.name}`}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          className="ghost"
+                          onClick={() => handleDelete(a.id)}
+                          disabled={busyId === a.id}
+                          type="button"
+                          title={`Delete ${a.name}`}
+                          aria-label={`Delete ${a.name}`}
+                        >
+                          ✕
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 );

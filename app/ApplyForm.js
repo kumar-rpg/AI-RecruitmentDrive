@@ -6,6 +6,13 @@ import ThemeToggle from '@/components/ThemeToggle';
 import Splash from './Splash';
 import { supabaseBrowser } from '@/lib/supabaseClient';
 import { getUploadTargets, submitApplication } from './actions';
+import {
+  EMAIL_PATTERN,
+  NAME_PATTERN,
+  PHONE_PATTERN,
+  sanitizeName,
+  formatPhone,
+} from '@/lib/validation';
 
 const initialForm = {
   name: '',
@@ -18,23 +25,6 @@ const initialForm = {
   internStart: '',
   internEnd: '',
 };
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const NAME_PATTERN = /^[A-Za-z]+(?:\s[A-Za-z]+)*$/;
-const PHONE_PATTERN = /^\d{3}-\d{4,8}$/;
-
-function sanitizeName(raw) {
-  // Letters and single spaces between words only — strips digits, symbols,
-  // and collapses repeated spaces as the user types.
-  return raw.replace(/[^A-Za-z\s]/g, '').replace(/\s{2,}/g, ' ');
-}
-
-function formatPhone(raw) {
-  // Digits only, hyphen auto-inserted after the first 3 (e.g. 016-4028507).
-  const digits = raw.replace(/\D/g, '').slice(0, 11);
-  if (digits.length <= 3) return digits;
-  return `${digits.slice(0, 3)}-${digits.slice(3)}`;
-}
-
 export default function ApplyForm({ positions }) {
   const router = useRouter();
   const [form, setForm] = useState(initialForm);

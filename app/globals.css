@@ -151,6 +151,33 @@ select.status {
 .stat-bar > span { display: block; height: 100%; border-radius: 999px; }
 .stat-pct { color: var(--muted); font-size: 0.78rem; width: 34px; text-align: right; flex-shrink: 0; }
 
+/* Row action buttons (Edit / delete) */
+.row-actions { display: flex; gap: 6px; align-items: center; }
+.row-actions button { white-space: nowrap; padding: 6px 10px; font-size: 0.8rem; }
+.row-actions button:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+.row-actions button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Edit dialog */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 100; overflow-y: auto;
+  background: rgba(0,0,0,0.6); padding: 24px 16px;
+  display: flex; align-items: flex-start; justify-content: center;
+}
+.modal-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+  padding: 22px; max-width: 520px; width: 100%; margin: auto;
+}
+.modal-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; margin-bottom: 6px;
+}
+.modal-head strong { font-size: 1.05rem; }
+.modal-head button { padding: 4px 10px; line-height: 1; }
+.modal-actions {
+  display: flex; gap: 8px; justify-content: flex-end;
+  margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--border);
+}
+
 /* Applications by position — ranked bars, one hue (bar length is the number) */
 .pos-total {
   display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
