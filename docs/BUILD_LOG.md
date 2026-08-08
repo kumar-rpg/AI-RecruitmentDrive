@@ -354,6 +354,17 @@ reason every other field in this app is re-validated server-side.
 `supabase/migrations/007_add_internship_duration.sql` adds the column;
 `schema.sql` updated for fresh installs.
 
+Rows submitted before this shipped have the column but no value — new
+submissions compute it going forward, but existing rows needed a one-time
+backfill. `supabase/backfill_internship_duration.sql` (run manually, not
+part of the numbered migration chain since it's a data fix, not a schema
+change) uses Postgres's `age()`, which breaks a date range into calendar
+months + remainder days the same way `monthsBetween()` does — verified
+equivalent on the same test cases. Ships with a preview SELECT to run
+first, the UPDATE itself (guarded to only rows with both dates and End >
+Start), and a verification SELECT that should return zero rows once
+applied.
+
 ---
 
 ## Where things stand
