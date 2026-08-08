@@ -12,6 +12,8 @@ import {
   PHONE_PATTERN,
   sanitizeName,
   formatPhone,
+  monthsBetween,
+  formatDuration,
 } from '@/lib/validation';
 
 const initialForm = {
@@ -36,6 +38,7 @@ export default function ApplyForm({ positions }) {
 
   const isWorking = form.category === 'working';
   const isIntern = form.category === 'intern';
+  const internDuration = monthsBetween(form.internStart, form.internEnd);
 
   function isPDF(file) {
     if (!file) return false;
@@ -289,6 +292,15 @@ export default function ApplyForm({ positions }) {
               value={form.internEnd}
               onChange={(e) => setForm({ ...form, internEnd: e.target.value })}
               required
+            />
+
+            <label>Internship Duration</label>
+            <input
+              type="text"
+              value={form.internStart && form.internEnd ? formatDuration(internDuration) : ''}
+              placeholder="Calculated automatically from the dates above"
+              readOnly
+              disabled
             />
           </>
         )}

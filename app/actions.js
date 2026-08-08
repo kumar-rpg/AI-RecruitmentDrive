@@ -2,7 +2,7 @@
 
 import { randomUUID } from 'crypto';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
-import { validateApplicant } from '@/lib/validation';
+import { validateApplicant, monthsBetween } from '@/lib/validation';
 
 const BUCKET = 'applications';
 const VALID_CATEGORIES = ['intern', 'grad', 'working'];
@@ -99,6 +99,11 @@ export async function submitApplication(payload) {
     throw new Error('That position is no longer open. Please refresh and pick another.');
   }
 
+  const isIntern = category === 'intern';
+  // Recomputed here rather than trusted from the client — the payload is
+  // just a Server Action argument, callable directly with any values.
+  const duration = isIntern ? monthsBetween(internStart, internEnd) : null;
+
   const { error } = await admin.from('applicants').insert({
     id,
     name: name.trim(),
@@ -108,8 +113,9 @@ export async function submitApplication(payload) {
     category,
     org: org.trim(),
     program_or_role: program.trim(),
-    internship_start_date: category === 'intern' ? internStart : null,
-    internship_end_date: category === 'intern' ? internEnd : null,
+    internship_start_date: isIntern ? internStart : null,
+    internship_end_date: isIntern ? internEnd : null,
+    internship_duration_months: duration?.months ?? null,
     resume_path: resumePath,
     transcript_path: category === 'working' ? null : transcriptPath,
     status: 'New',

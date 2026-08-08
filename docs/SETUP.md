@@ -71,11 +71,12 @@ supabase/migrations/003_add_positions.sql
 supabase/migrations/004_add_internship_dates.sql
 supabase/migrations/005_add_hired_status.sql
 supabase/migrations/006_add_interview_status.sql
+supabase/migrations/007_add_internship_duration.sql
 ```
 
 **B. Automatic.** Set `SUPABASE_DB_URL` to your Postgres connection string
 (Supabase → Project Settings → Database → Connection string → URI) and re-run.
-The script will offer to apply all six files for you, pulling in the `pg`
+The script will offer to apply all seven files for you, pulling in the `pg`
 driver on demand without adding it to `package.json`.
 
 ```bash

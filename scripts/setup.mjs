@@ -383,6 +383,7 @@ const SQL_FILES = [
   'supabase/migrations/004_add_internship_dates.sql',
   'supabase/migrations/005_add_hired_status.sql',
   'supabase/migrations/006_add_interview_status.sql',
+  'supabase/migrations/007_add_internship_duration.sql',
 ];
 
 // Selecting every column the app relies on is a cheap way to prove both the
@@ -390,7 +391,8 @@ const SQL_FILES = [
 const EXPECTED = {
   applicants:
     'id,name,email,phone,category,org,program_or_role,position,' +
-    'internship_start_date,internship_end_date,resume_path,transcript_path,status,submitted_at',
+    'internship_start_date,internship_end_date,internship_duration_months,' +
+    'resume_path,transcript_path,status,submitted_at',
   positions: 'id,title,is_active,created_at',
 };
 

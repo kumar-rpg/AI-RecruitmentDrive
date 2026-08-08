@@ -1,7 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { sanitizeName, formatPhone, validateApplicant } from '@/lib/validation';
+import {
+  sanitizeName,
+  formatPhone,
+  validateApplicant,
+  monthsBetween,
+  formatDuration,
+} from '@/lib/validation';
 import { updateApplicant } from './actions';
 
 const CATEGORIES = [
@@ -27,6 +33,7 @@ export default function EditApplicantModal({ applicant, positions, onSaved, onCl
 
   const isWorking = form.category === 'working';
   const isIntern = form.category === 'intern';
+  const internDuration = monthsBetween(form.internStart, form.internEnd);
 
   useEffect(() => {
     const onKey = (e) => {
@@ -77,6 +84,7 @@ export default function EditApplicantModal({ applicant, positions, onSaved, onCl
         program_or_role: isWorking ? '' : form.program.trim(),
         internship_start_date: isIntern ? form.internStart : null,
         internship_end_date: isIntern ? form.internEnd : null,
+        internship_duration_months: isIntern ? internDuration?.months ?? null : null,
       });
     } catch (err) {
       setError(err.message || 'Could not save changes.');
@@ -169,6 +177,15 @@ export default function EditApplicantModal({ applicant, positions, onSaved, onCl
               type="date"
               value={form.internEnd}
               onChange={(e) => setForm({ ...form, internEnd: e.target.value })}
+            />
+
+            <label>Internship Duration</label>
+            <input
+              type="text"
+              value={form.internStart && form.internEnd ? formatDuration(internDuration) : ''}
+              placeholder="Calculated automatically from the dates above"
+              readOnly
+              disabled
             />
           </>
         )}

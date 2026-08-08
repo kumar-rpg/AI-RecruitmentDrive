@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { supabaseServer } from '@/lib/supabaseServer';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
-import { validateApplicant } from '@/lib/validation';
+import { validateApplicant, monthsBetween } from '@/lib/validation';
 
 const BUCKET = 'applications';
 // Must stay in step with the CHECK constraint on applicants.status — see the
@@ -61,6 +61,9 @@ export async function updateApplicant(id, payload) {
 
   const isWorking = category === 'working';
   const isIntern = category === 'intern';
+  // Recomputed here rather than trusted from the client — same reasoning as
+  // the public submit action.
+  const duration = isIntern ? monthsBetween(internStart, internEnd) : null;
 
   const { error } = await admin
     .from('applicants')
@@ -74,6 +77,7 @@ export async function updateApplicant(id, payload) {
       program_or_role: isWorking ? '' : program.trim(),
       internship_start_date: isIntern ? internStart : null,
       internship_end_date: isIntern ? internEnd : null,
+      internship_duration_months: duration?.months ?? null,
     })
     .eq('id', id);
   if (error) throw new Error('Could not save changes: ' + error.message);

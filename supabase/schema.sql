@@ -28,6 +28,7 @@ create table if not exists public.applicants (
   position text not null,
   internship_start_date date,
   internship_end_date date,
+  internship_duration_months integer,
   resume_path text not null,
   transcript_path text,
   status text not null default 'New'

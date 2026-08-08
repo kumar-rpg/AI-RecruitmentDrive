@@ -331,6 +331,29 @@ separation 17.7 light / 15.1 dark, unchanged from the four-status set. The
 reviewed count is still "everything that isn't New", so Hired correctly
 counts as reviewed.
 
+## 19. Internship Duration (Months)
+
+Adds a calculated, read-only "Internship Duration" field beneath the
+Start/End Date pickers on both the public form and the admin edit dialog,
+plus a new `internship_duration_months` column so the dashboard can show
+and export it without recomputing per row.
+
+`lib/validation.js` gained `monthsBetween(start, end)` — a calendar-accurate
+breakdown (whole months + remainder days), not a day-count divided by 30.44,
+so "2026-09-01 to 2026-12-01" reads as exactly 3 months rather than "91
+days" or an off-by-one month. Used by `formatDuration()` for the live
+in-form display (e.g. "3 months", or "5 months, 26 days" when the dates
+don't land on a clean boundary — visible feedback against the duration
+policy added in §16).
+
+The stored value is always recomputed server-side from the submitted or
+edited dates, in both `submitApplication()` and `updateApplicant()` — the
+client-side figure is display only, never trusted as input, for the same
+reason every other field in this app is re-validated server-side.
+
+`supabase/migrations/007_add_internship_duration.sql` adds the column;
+`schema.sql` updated for fresh installs.
+
 ---
 
 ## Where things stand
@@ -349,6 +372,7 @@ counts as reviewed.
   3. `004_add_internship_dates.sql`
   4. `005_add_hired_status.sql`
   5. `006_add_interview_status.sql`
+  6. `007_add_internship_duration.sql`
 
 ### What gets collected, by category
 

@@ -13,6 +13,11 @@ const STATUSES = [
   'New', 'Reviewing', 'Shortlisted', 'Interview', 'Hired', 'Rejected',
 ];
 
+function formatMonths(n) {
+  if (n === null || n === undefined) return '—';
+  return `${n} month${n === 1 ? '' : 's'}`;
+}
+
 function formatDate(dateStr) {
   if (!dateStr) return '—';
   const date = new Date(dateStr + 'T00:00:00Z');
@@ -96,6 +101,7 @@ export default function DashboardClient({ initialApplicants, initialPositions, u
       'Program/Role',
       'Internship Start',
       'Internship End',
+      'Internship Duration',
       'Status',
       'Submitted At',
     ];
@@ -109,6 +115,7 @@ export default function DashboardClient({ initialApplicants, initialPositions, u
       a.program_or_role,
       formatDate(a.internship_start_date),
       formatDate(a.internship_end_date),
+      formatMonths(a.internship_duration_months),
       a.status,
       a.submitted_at,
     ]);
@@ -208,6 +215,7 @@ export default function DashboardClient({ initialApplicants, initialPositions, u
                 <th>Program/Role</th>
                 <th>Internship Start</th>
                 <th>Internship End</th>
+                <th>Duration</th>
                 <th>Resume</th>
                 <th>Transcript</th>
                 <th></th>
@@ -242,6 +250,7 @@ export default function DashboardClient({ initialApplicants, initialPositions, u
                     <td>{a.program_or_role || '—'}</td>
                     <td>{formatDate(a.internship_start_date)}</td>
                     <td>{formatDate(a.internship_end_date)}</td>
+                    <td>{formatMonths(a.internship_duration_months)}</td>
                     <td>
                       <span
                         className="pill ok"
