@@ -39,6 +39,7 @@ export default function ApplyForm({ positions }) {
   const isWorking = form.category === 'working';
   const isIntern = form.category === 'intern';
   const internDuration = monthsBetween(form.internStart, form.internEnd);
+  const openPositions = positions.filter((p) => p.is_active !== false);
 
   function isPDF(file) {
     if (!file) return false;
@@ -222,7 +223,7 @@ export default function ApplyForm({ positions }) {
         />
 
         <label>Position Applied For</label>
-        {positions.length === 0 ? (
+        {openPositions.length === 0 ? (
           <div className="hint">
             No positions are currently open — check back later, or contact us directly.
           </div>
@@ -235,7 +236,7 @@ export default function ApplyForm({ positions }) {
             <option value="" disabled>
               Select a position…
             </option>
-            {positions.map((p) => (
+            {openPositions.map((p) => (
               <option key={p.id} value={p.title}>
                 {p.title}
               </option>
@@ -355,7 +356,7 @@ export default function ApplyForm({ positions }) {
 
         {error && <div className="err">{error}</div>}
 
-        <button className="primary" type="submit" disabled={submitting || positions.length === 0}>
+        <button className="primary" type="submit" disabled={submitting || openPositions.length === 0}>
           {submitting ? 'Submitting…' : 'Submit Application'}
         </button>
       </form>

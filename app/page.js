@@ -10,8 +10,7 @@ export const revalidate = 0;
 export default async function ApplyPage() {
   const { data: positions, error } = await supabaseAdmin()
     .from('positions')
-    .select('id, title')
-    .eq('is_active', true)
+    .select('id, title, is_active')
     .order('title', { ascending: true });
 
   if (error) {
