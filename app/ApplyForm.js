@@ -179,7 +179,7 @@ export default function ApplyForm({ positions }) {
   }
 
   if (showSplash) {
-    return <Splash onStart={() => setShowSplash(false)} />;
+    return <Splash onStart={() => setShowSplash(false)} positions={positions} />;
   }
 
   return (
