@@ -3,7 +3,10 @@
 // Shown over the form on arrival so applicants know what to gather before they
 // start — the uploads are the step most likely to strand someone mid-form.
 export default function Splash({ onStart, positions = [] }) {
+  const availablePositions = positions.filter((p) => p.is_active);
   const closedPositions = positions.filter((p) => !p.is_active);
+  const hasPositions = availablePositions.length > 0 || closedPositions.length > 0;
+
   return (
     <div className="splash-overlay">
       <div className="splash-card">
@@ -18,14 +21,28 @@ export default function Splash({ onStart, positions = [] }) {
           upload them as part of your application.
         </p>
 
-        {closedPositions.length > 0 && (
-          <div className="splash-notice">
-            <strong>Currently Closed:</strong>
-            <ul style={{ margin: '6px 0 0 0' }}>
-              {closedPositions.map((p) => (
-                <li key={p.id}>{p.title}</li>
-              ))}
-            </ul>
+        {hasPositions && (
+          <div className="splash-positions">
+            {availablePositions.length > 0 && (
+              <div className="splash-available">
+                <strong>Available Positions:</strong>
+                <ul style={{ margin: '6px 0 0 0' }}>
+                  {availablePositions.map((p) => (
+                    <li key={p.id}>{p.title}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {closedPositions.length > 0 && (
+              <div className="splash-notice">
+                <strong>Currently Closed:</strong>
+                <ul style={{ margin: '6px 0 0 0' }}>
+                  {closedPositions.map((p) => (
+                    <li key={p.id}>{p.title}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         )}
 

@@ -125,13 +125,26 @@ select.status {
 .splash-callout ul { margin: 6px 0 0; padding-left: 20px; font-size: 0.87rem; }
 .splash-callout li { margin-bottom: 2px; }
 .splash-callout p { font-size: 0.8rem; color: var(--muted); margin: 8px 0 0; }
+.splash-positions {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0;
+}
+.splash-available {
+  padding: 10px 12px; border-radius: 6px;
+  background: rgba(126,231,135,0.1); border: 1px solid rgba(126,231,135,0.3);
+}
+.splash-available strong { font-size: 0.85rem; color: var(--accent2); }
+.splash-available ul { margin: 6px 0 0; padding-left: 20px; font-size: 0.87rem; }
+.splash-available li { margin-bottom: 2px; }
 .splash-notice {
-  margin: 14px 0; padding: 10px 12px; border-radius: 6px;
+  padding: 10px 12px; border-radius: 6px;
   background: rgba(255,107,107,0.1); border: 1px solid rgba(255,107,107,0.3);
 }
 .splash-notice strong { font-size: 0.85rem; color: var(--danger); }
 .splash-notice ul { margin: 6px 0 0; padding-left: 20px; font-size: 0.87rem; }
 .splash-notice li { margin-bottom: 2px; }
+@media (max-width: 560px) {
+  .splash-positions { grid-template-columns: 1fr; }
+}
 .splash-note {
   font-size: 0.82rem; color: var(--muted); margin: 18px 0 0;
   padding-top: 14px; border-top: 1px solid var(--border);
