@@ -63,8 +63,8 @@ export default function Splash({ onStart, positions = [] }) {
           <div className="splash-callout">
             <strong>Internship Duration</strong>
             <ul>
-              <li>Support roles — 3 months</li>
-              <li>Engineering roles — exactly 6 months, no more, no less</li>
+              <li>Support roles — 3 months (i.e. Finance, Procurement, etc)</li>
+              <li>6 months (i.e. Software Engineering, Mechanical Engineering, etc)</li>
             </ul>
             <p>Please set your Start and End Date in the application to match.</p>
           </div>
