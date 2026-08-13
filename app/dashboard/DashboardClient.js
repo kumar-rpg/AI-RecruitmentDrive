@@ -34,6 +34,7 @@ export default function DashboardClient({ initialApplicants, initialPositions, u
   const [filterCat, setFilterCat] = useState('');
   const [filterFlag, setFilterFlag] = useState('');
   const [filterPosition, setFilterPosition] = useState('');
+  const [filterStatus, setFilterStatus] = useState('');
   const [busyId, setBusyId] = useState(null);
   const [editing, setEditing] = useState(null);
 
@@ -44,6 +45,7 @@ export default function DashboardClient({ initialApplicants, initialPositions, u
       if (filterCat && a.category !== filterCat) return false;
       if (filterFlag === 'missing' && !missingDoc) return false;
       if (filterPosition && a.position !== filterPosition) return false;
+      if (filterStatus && a.status !== filterStatus) return false;
       if (
         s &&
         !(
@@ -56,7 +58,7 @@ export default function DashboardClient({ initialApplicants, initialPositions, u
         return false;
       return true;
     });
-  }, [applicants, search, filterCat, filterFlag, filterPosition]);
+  }, [applicants, search, filterCat, filterFlag, filterPosition, filterStatus]);
 
   async function handleStatusChange(id, status) {
     setApplicants((prev) => prev.map((a) => (a.id === id ? { ...a, status } : a)));
@@ -195,6 +197,14 @@ export default function DashboardClient({ initialApplicants, initialPositions, u
           <select value={filterFlag} onChange={(e) => setFilterFlag(e.target.value)}>
             <option value="">All statuses</option>
             <option value="missing">Missing documents only</option>
+          </select>
+          <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
+            <option value="">All applicant statuses</option>
+            {STATUSES.map((status) => (
+              <option key={status} value={status}>
+                {status}
+              </option>
+            ))}
           </select>
           <button className="ghost" onClick={exportCSV} type="button">
             Export CSV
