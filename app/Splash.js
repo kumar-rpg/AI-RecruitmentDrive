@@ -64,7 +64,7 @@ export default function Splash({ onStart, positions = [] }) {
             <strong>Internship Duration</strong>
             <ul>
               <li>Support roles — 3 months (i.e. Finance, Procurement, etc)</li>
-              <li>6 months (i.e. Software Engineering, Mechanical Engineering, etc)</li>
+              <li>Engineering roles — 6 months (i.e. Software Engineering, Mechanical Engineering, etc)</li>
             </ul>
             <p>Please set your Start and End Date in the application to match.</p>
           </div>
