@@ -104,6 +104,9 @@ export default function DashboardClient({ initialApplicants, initialPositions, u
       'Internship Start',
       'Internship End',
       'Internship Duration',
+      'Resume Path',
+      'Transcript Path',
+      'Salary Slip Path',
       'Status',
       'Submitted At',
     ];
@@ -118,6 +121,9 @@ export default function DashboardClient({ initialApplicants, initialPositions, u
       formatDate(a.internship_start_date),
       formatDate(a.internship_end_date),
       formatMonths(a.internship_duration_months),
+      a.resume_path || '',
+      a.transcript_path || '',
+      a.salary_slip_path || '',
       a.status,
       a.submitted_at,
     ]);
@@ -228,6 +234,7 @@ export default function DashboardClient({ initialApplicants, initialPositions, u
                 <th>Duration</th>
                 <th>Resume</th>
                 <th>Transcript</th>
+                <th>Salary Slip</th>
                 <th></th>
               </tr>
             </thead>
@@ -278,6 +285,21 @@ export default function DashboardClient({ initialApplicants, initialPositions, u
                           className="pill ok"
                           style={{ cursor: 'pointer' }}
                           onClick={() => handleViewDoc(a.transcript_path)}
+                        >
+                          View
+                        </span>
+                      ) : (
+                        <span className="pill bad">Missing</span>
+                      )}
+                    </td>
+                    <td>
+                      {a.category !== 'working' ? (
+                        <span className="pill na">N/A</span>
+                      ) : a.salary_slip_path ? (
+                        <span
+                          className="pill ok"
+                          style={{ cursor: 'pointer' }}
+                          onClick={() => handleViewDoc(a.salary_slip_path)}
                         >
                           View
                         </span>
