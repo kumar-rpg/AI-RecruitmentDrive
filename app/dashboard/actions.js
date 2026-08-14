@@ -11,7 +11,7 @@ const BUCKET = 'applications';
 // latest status migration under supabase/migrations/ — and with STATUSES in
 // DashboardClient.js and STATUS_META in StatsPanel.js.
 const VALID_STATUSES = [
-  'New', 'Reviewing', 'Shortlisted', 'Interview', 'Offered', 'Hired', 'Rejected',
+  'New', 'Reviewing', 'Shortlisted', 'Interview', 'Offered', 'Hired', 'Rejected', 'Declined', 'KIV',
 ];
 
 // Defense in depth: middleware.js already blocks unauthenticated visits to

@@ -32,7 +32,7 @@ create table if not exists public.applicants (
   resume_path text not null,
   transcript_path text,
   status text not null default 'New'
-    check (status in ('New', 'Reviewing', 'Shortlisted', 'Interview', 'Offered', 'Hired', 'Rejected')),
+    check (status in ('New', 'Reviewing', 'Shortlisted', 'Interview', 'Offered', 'Hired', 'Rejected', 'Declined', 'KIV')),
   submitted_at timestamptz not null default now()
 );
 

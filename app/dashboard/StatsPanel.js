@@ -11,6 +11,8 @@ const STATUS_META = [
   { key: 'Offered', color: 'var(--warn)' },
   { key: 'Hired', color: 'var(--hired)' },
   { key: 'Rejected', color: 'var(--danger)' },
+  { key: 'Declined', color: 'var(--danger)' },
+  { key: 'KIV', color: 'var(--accent)' },
 ];
 
 const RADIUS = 54;
