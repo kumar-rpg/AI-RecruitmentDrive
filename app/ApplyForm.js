@@ -32,6 +32,7 @@ export default function ApplyForm({ positions }) {
   const [form, setForm] = useState(initialForm);
   const [resumeFile, setResumeFile] = useState(null);
   const [transcriptFile, setTranscriptFile] = useState(null);
+  const [salarySlipFile, setSalarySlipFile] = useState(null);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [showSplash, setShowSplash] = useState(true);
@@ -136,6 +137,16 @@ export default function ApplyForm({ positions }) {
         return;
       }
     }
+    if (isWorking) {
+      if (!salarySlipFile) {
+        setError('Salary slip is required for working applicants.');
+        return;
+      }
+      if (!isPDF(salarySlipFile)) {
+        setError('Salary slip must be a PDF file.');
+        return;
+      }
+    }
 
     setSubmitting(true);
     try {
@@ -157,6 +168,16 @@ export default function ApplyForm({ positions }) {
         transcriptPath = targets.transcript.path;
       }
 
+      let salarySlipPath = null;
+      if (isWorking) {
+        const { error: salarySlipUploadError } = await supabase.storage
+          .from('applications')
+          .uploadToSignedUrl(targets.salarySip.path, targets.salarySip.token, salarySlipFile);
+        if (salarySlipUploadError)
+          throw new Error('Salary slip upload failed: ' + salarySlipUploadError.message);
+        salarySlipPath = targets.salarySip.path;
+      }
+
       await submitApplication({
         id: targets.id,
         name: form.name,
@@ -170,6 +191,7 @@ export default function ApplyForm({ positions }) {
         internEnd: isIntern ? form.internEnd : '',
         resumePath: targets.resume.path,
         transcriptPath,
+        salarySlipPath,
       });
 
       router.push('/thank-you');
@@ -260,7 +282,7 @@ export default function ApplyForm({ positions }) {
                 name="category"
                 value={opt.val}
                 checked={form.category === opt.val}
-                onChange={() =>
+                onChange={() => {
                   setForm({
                     ...form,
                     category: opt.val,
@@ -268,8 +290,11 @@ export default function ApplyForm({ positions }) {
                     program: opt.val === 'working' ? '' : form.program,
                     internStart: opt.val === 'intern' ? form.internStart : '',
                     internEnd: opt.val === 'intern' ? form.internEnd : '',
-                  })
-                }
+                  });
+                  if (opt.val !== 'working') setSalarySlipFile(null);
+                  if (opt.val === 'working') setTranscriptFile(null);
+                }}
+
                 required
               />{' '}
               {opt.label}
@@ -350,6 +375,21 @@ export default function ApplyForm({ positions }) {
                 onChange={(e) => handleFileSelect(e, setTranscriptFile, 'Academic Transcript')}
               />
               <div className="hint">{transcriptFile ? transcriptFile.name : 'No file chosen'}</div>
+            </div>
+          </>
+        )}
+
+        {isWorking && (
+          <>
+            <label>Salary Slip — last 3 months (PDF only — 1 file)</label>
+            <div className="file-row">
+              <input
+                type="file"
+                accept="application/pdf"
+                multiple={false}
+                onChange={(e) => handleFileSelect(e, setSalarySlipFile, 'Salary Slip')}
+              />
+              <div className="hint">{salarySlipFile ? salarySlipFile.name : 'No file chosen'}</div>
             </div>
           </>
         )}

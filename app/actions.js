@@ -39,10 +39,25 @@ export async function getUploadTargets(category) {
     };
   }
 
+  let salarySip = null;
+  if (category === 'working') {
+    const salarySlipPath = `${id}/salary_slip.pdf`;
+    const { data: salarySlipData, error: salarySlipError } = await admin.storage
+      .from(BUCKET)
+      .createSignedUploadUrl(salarySlipPath);
+    if (salarySlipError)
+      throw new Error('Could not prepare salary slip upload: ' + salarySlipError.message);
+    salarySip = {
+      path: salarySlipData.path,
+      token: salarySlipData.token,
+    };
+  }
+
   return {
     id,
     resume: { path: resumeData.path, token: resumeData.token },
     transcript,
+    salarySip,
   };
 }
 
@@ -63,6 +78,7 @@ export async function submitApplication(payload) {
     internEnd,
     resumePath,
     transcriptPath,
+    salarySlipPath,
   } = payload;
 
   if (!id) throw new Error('Missing required fields.');
@@ -85,6 +101,9 @@ export async function submitApplication(payload) {
   }
   if (category !== 'working' && !transcriptPath) {
     throw new Error('Transcript is required for this category.');
+  }
+  if (category === 'working' && !salarySlipPath) {
+    throw new Error('Salary slip is required for working applicants.');
   }
 
   const admin = supabaseAdmin();
@@ -118,6 +137,7 @@ export async function submitApplication(payload) {
     internship_duration_months: duration?.months ?? null,
     resume_path: resumePath,
     transcript_path: category === 'working' ? null : transcriptPath,
+    salary_slip_path: category === 'working' ? salarySlipPath : null,
     status: 'New',
   });
 

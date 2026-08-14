@@ -31,6 +31,7 @@ create table if not exists public.applicants (
   internship_duration_months integer,
   resume_path text not null,
   transcript_path text,
+  salary_slip_path text,
   status text not null default 'New'
     check (status in ('New', 'Reviewing', 'Shortlisted', 'Interview', 'Offered', 'Hired', 'Rejected', 'Declined', 'KIV')),
   submitted_at timestamptz not null default now()

@@ -74,6 +74,7 @@ export default function Splash({ onStart, positions = [] }) {
           <h2>Already Working</h2>
           <ul>
             <li>Your resume</li>
+            <li>3 months salary slip</li>
           </ul>
         </div>
 
