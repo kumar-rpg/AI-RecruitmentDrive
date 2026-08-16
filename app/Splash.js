@@ -61,10 +61,10 @@ export default function Splash({ onStart, positions = [] }) {
           </ol>
 
           <div className="splash-callout">
-            <strong>Internship Duration</strong>
+            <strong>Internship Duration & CGPA Requirements</strong>
             <ul>
-              <li>Support roles — 3 months (i.e. Finance, Procurement, etc)</li>
-              <li>Engineering roles — 6 months (i.e. Software Engineering, Mechanical Engineering, etc)</li>
+              <li>Support roles — 3 months, CGPA &gt; 3.0 (i.e. Finance, Procurement, etc)</li>
+              <li>Engineering roles — 6 months, CGPA &gt; 3.2 (i.e. Software Engineering, Mechanical Engineering, etc)</li>
             </ul>
             <p>Please set your Start and End Date in the application to match.</p>
           </div>
