@@ -18,7 +18,7 @@ export default function Splash({ onStart, positions = [] }) {
         </p>
         <p className="splash-lead">
           Please have the following in hand before you begin — you will be asked to
-          upload them as part of your application.
+          upload them as part of your application. Please note the minimum CGPA requirements: Support Roles require CGPA &gt; 3.0, and Engineering Roles require CGPA &gt; 3.2.
         </p>
 
         {hasPositions && (
