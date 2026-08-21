@@ -47,6 +47,13 @@ export default function ApplyForm({ positions }) {
     return file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
   }
 
+  function isValidFilename(filename) {
+    // Allow only alphanumeric characters, spaces, hyphens, underscores, and dots
+    // Disallow special characters and symbols
+    const validPattern = /^[a-zA-Z0-9\s\-_.]+$/;
+    return validPattern.test(filename);
+  }
+
   function handleFileSelect(e, setFile, label) {
     const files = e.target.files;
     if (!files || files.length === 0) {
@@ -55,6 +62,14 @@ export default function ApplyForm({ positions }) {
     }
     if (files.length > 1) {
       setError(`Please select only 1 file for ${label} — you selected ${files.length}.`);
+      e.target.value = '';
+      setFile(null);
+      return;
+    }
+    if (!isValidFilename(files[0].name)) {
+      setError(
+        `Filename "${files[0].name}" contains invalid characters. Please use only letters, numbers, spaces, hyphens, underscores, and periods.`
+      );
       e.target.value = '';
       setFile(null);
       return;
