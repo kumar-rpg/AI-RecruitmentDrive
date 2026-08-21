@@ -87,16 +87,17 @@ export default function MobileAuth({ onSubmit }) {
         </div>
 
         <div className="mobile-actions">
-          <button className="ghost-secondary" onClick={handleClear} type="button">
-            Clear
+          <button className="ghost-secondary" onClick={handleClear} type="button" title="Clear">
+            ✕
           </button>
           <button
             className="primary-mobile"
             onClick={handleSubmit}
             disabled={passcode.length !== 6}
             type="button"
+            title="Submit"
           >
-            Submit
+            ✓
           </button>
         </div>
       </div>
