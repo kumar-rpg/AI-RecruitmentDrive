@@ -8,9 +8,26 @@ export default function MobileAuth({ onSubmit }) {
   const [passcode, setPasscode] = useState('');
   const [error, setError] = useState('');
 
-  function handleDigitClick(digit) {
+  async function handleDigitClick(digit) {
     if (passcode.length < 6) {
-      setPasscode(passcode + digit);
+      const newPasscode = passcode + digit;
+      setPasscode(newPasscode);
+
+      // Auto-submit when 6 digits are entered
+      if (newPasscode.length === 6) {
+        try {
+          const isValid = await validateMobilePasscode(newPasscode);
+          if (isValid) {
+            onSubmit(true);
+          } else {
+            setError('Incorrect passcode. Please try again.');
+            setPasscode('');
+          }
+        } catch (err) {
+          setError('Authentication error. Please try again.');
+          setPasscode('');
+        }
+      }
     }
   }
 
@@ -89,15 +106,6 @@ export default function MobileAuth({ onSubmit }) {
         <div className="mobile-actions">
           <button className="ghost-secondary" onClick={handleClear} type="button" title="Clear">
             ✕
-          </button>
-          <button
-            className="primary-mobile"
-            onClick={handleSubmit}
-            disabled={passcode.length !== 6}
-            type="button"
-            title="Submit"
-          >
-            ✓
           </button>
         </div>
       </div>
