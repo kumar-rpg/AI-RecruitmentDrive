@@ -48,9 +48,9 @@ export default function ApplyForm({ positions }) {
   }
 
   function isValidFilename(filename) {
-    // Allow only alphanumeric characters, spaces, hyphens, underscores, and dots
-    // Disallow special characters and symbols
-    const validPattern = /^[a-zA-Z0-9\s\-_.]+$/;
+    // Allow only alphanumeric characters, spaces, hyphens, and dots
+    // Disallow special characters, symbols, and underscores
+    const validPattern = /^[a-zA-Z0-9\s\-.]+$/;
     return validPattern.test(filename);
   }
 
@@ -68,7 +68,7 @@ export default function ApplyForm({ positions }) {
     }
     if (!isValidFilename(files[0].name)) {
       setError(
-        `Filename "${files[0].name}" contains invalid characters. Please use only letters, numbers, spaces, hyphens, underscores, and periods.`
+        `Filename "${files[0].name}" contains invalid characters. Please use only letters, numbers, spaces, hyphens, and periods.`
       );
       e.target.value = '';
       setFile(null);
