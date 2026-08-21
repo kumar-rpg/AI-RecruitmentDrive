@@ -15,18 +15,21 @@ export default function MobileAuth({ onSubmit }) {
 
       // Auto-submit when 6 digits are entered
       if (newPasscode.length === 6) {
-        try {
-          const isValid = await validateMobilePasscode(newPasscode);
-          if (isValid) {
-            onSubmit(true);
-          } else {
-            setError('Incorrect passcode. Please try again.');
+        setTimeout(async () => {
+          try {
+            const isValid = await validateMobilePasscode(newPasscode);
+            if (isValid) {
+              onSubmit(true);
+            } else {
+              setError('Incorrect passcode. Please try again.');
+              setPasscode('');
+            }
+          } catch (err) {
+            console.error('Validation error:', err);
+            setError('Authentication error. Please try again.');
             setPasscode('');
           }
-        } catch (err) {
-          setError('Authentication error. Please try again.');
-          setPasscode('');
-        }
+        }, 0);
       }
     }
   }

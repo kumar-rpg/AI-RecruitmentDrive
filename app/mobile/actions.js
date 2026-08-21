@@ -1,10 +1,15 @@
 'use server';
 
 export async function validateMobilePasscode(passcode) {
-  const correctPasscode = process.env.MOBILE_LOGIN_PASSCODE;
+  if (!passcode || typeof passcode !== 'string') {
+    return false;
+  }
+
+  const correctPasscode = process.env.MOBILE_LOGIN_PASSCODE || '';
 
   if (!correctPasscode) {
-    throw new Error('Passcode not configured.');
+    console.error('MOBILE_LOGIN_PASSCODE not configured in environment');
+    return false;
   }
 
   return passcode === correctPasscode;
