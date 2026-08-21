@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import ThemeToggle from '@/components/ThemeToggle';
+import { validateMobilePasscode } from './actions';
 
 export default function MobileAuth({ onSubmit }) {
   const [passcode, setPasscode] = useState('');
@@ -24,15 +25,22 @@ export default function MobileAuth({ onSubmit }) {
     }
   }
 
-  function handleSubmit() {
+  async function handleSubmit() {
     if (passcode.length !== 6) {
       setError('Please enter a 6-digit passcode.');
       return;
     }
     setError('');
-    onSubmit(passcode);
-    if (passcode !== '123456') {
-      setError('Incorrect passcode. Please try again.');
+    try {
+      const isValid = await validateMobilePasscode(passcode);
+      if (isValid) {
+        onSubmit(true);
+      } else {
+        setError('Incorrect passcode. Please try again.');
+        setPasscode('');
+      }
+    } catch (err) {
+      setError('Authentication error. Please try again.');
       setPasscode('');
     }
   }

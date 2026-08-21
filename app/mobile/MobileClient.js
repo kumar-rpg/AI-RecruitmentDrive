@@ -4,8 +4,6 @@ import { useState, useMemo } from 'react';
 import MobileAuth from './MobileAuth';
 import MobileDashboard from './MobileDashboard';
 
-const PASSCODE = '123456';
-
 export default function MobileClient({ applicants }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -31,8 +29,8 @@ export default function MobileClient({ applicants }) {
     return counts;
   }, [applicants]);
 
-  const handlePasscodeSubmit = (passcode) => {
-    if (passcode === PASSCODE) {
+  const handlePasscodeSubmit = (isValid) => {
+    if (isValid) {
       setIsAuthenticated(true);
     }
   };
