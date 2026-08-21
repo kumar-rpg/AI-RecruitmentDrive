@@ -243,3 +243,95 @@ select.status {
 @media (max-width: 560px) {
   .pos-bar { width: 30%; min-width: 60px; }
 }
+
+/* Mobile Dashboard */
+.mobile-auth, .mobile-dashboard {
+  min-height: 100vh; background: var(--bg); display: flex; flex-direction: column;
+}
+.mobile-header {
+  padding: 16px; border-bottom: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: flex-start;
+}
+.mobile-header h1 { font-size: 1.4rem; margin: 0 0 2px; }
+.mobile-header .sub { font-size: 0.85rem; color: var(--muted); }
+
+.mobile-auth-card {
+  flex: 1; display: flex; flex-direction: column; justify-content: center;
+  padding: 32px 20px; max-width: 100%;
+}
+.mobile-auth-card h2 { text-align: center; margin: 0 0 6px; font-size: 1.2rem; }
+.mobile-auth-hint { text-align: center; color: var(--muted); font-size: 0.9rem; margin: 0 0 28px; }
+
+.passcode-display {
+  display: flex; justify-content: center; gap: 12px; margin-bottom: 40px;
+}
+.passcode-dot {
+  width: 14px; height: 14px; border-radius: 50%;
+  border: 2px solid var(--border); background: transparent;
+  transition: all 0.2s ease;
+}
+.passcode-dot.filled { background: var(--accent); border-color: var(--accent); }
+
+.passcode-keypad {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px;
+}
+.keypad-btn {
+  aspect-ratio: 1; background: var(--input-bg); border: 1px solid var(--border);
+  border-radius: 12px; color: var(--text); font-size: 1.3rem; font-weight: 600;
+  cursor: pointer; transition: all 0.15s ease;
+}
+.keypad-btn:active { background: var(--accent); color: #0d0f13; border-color: var(--accent); }
+.keypad-btn.danger { background: rgba(255,107,107,0.1); color: var(--danger); }
+.keypad-btn.danger:active { background: var(--danger); color: #fff; }
+
+.mobile-error { color: var(--danger); text-align: center; margin-bottom: 16px; font-size: 0.9rem; }
+
+.mobile-actions {
+  display: flex; gap: 12px;
+}
+.ghost-secondary {
+  flex: 1; background: none; border: 1px solid var(--border); color: var(--text);
+  padding: 12px; border-radius: 8px; cursor: pointer; font-size: 0.95rem;
+}
+.ghost-secondary:active { background: var(--input-bg); }
+.primary-mobile {
+  flex: 1; background: var(--accent); color: #0d0f13; border: none;
+  padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.95rem;
+}
+.primary-mobile:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.mobile-wrap { flex: 1; padding: 16px; overflow-y: auto; }
+.mobile-overview h2 { margin: 0 0 20px; font-size: 1.1rem; }
+
+.mobile-gauge {
+  position: relative; width: 150px; height: 150px; margin: 0 auto 32px;
+}
+.gauge-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.gauge-svg circle { fill: none; stroke-width: 12; }
+.gauge-track { stroke: var(--input-bg); }
+.gauge-center {
+  position: absolute; inset: 0; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; text-align: center;
+}
+.gauge-center strong { font-size: 1.6rem; line-height: 1; }
+.gauge-center span { font-size: 0.7rem; color: var(--muted); margin-top: 2px; }
+
+.mobile-stats {
+  background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px;
+}
+.stat-total {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding-bottom: 12px; margin-bottom: 12px; border-bottom: 1px solid var(--border);
+}
+.stat-total span { color: var(--muted); font-size: 0.9rem; }
+.stat-total strong { font-size: 1.4rem; }
+
+.mobile-stat-row {
+  display: flex; align-items: center; gap: 10px; padding: 10px 0;
+  font-size: 0.9rem; border-bottom: 1px solid var(--border);
+}
+.mobile-stat-row:last-child { border-bottom: none; }
+.mobile-stat-row .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.mobile-stat-row .label { flex: 1; color: var(--muted); }
+.mobile-stat-row .count { font-weight: 600; width: 32px; text-align: right; }
+.mobile-stat-row .pct { color: var(--muted); font-size: 0.85rem; width: 40px; text-align: right; }
