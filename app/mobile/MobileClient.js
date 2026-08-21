@@ -1,11 +1,29 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import MobileAuth from './MobileAuth';
 import MobileDashboard from './MobileDashboard';
 
-export default function MobileClient({ applicants }) {
+export default function MobileClient({ applicants: initialApplicants }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [applicants, setApplicants] = useState(initialApplicants);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handleApplicantChange = useCallback(async () => {
+    setIsRefreshing(true);
+    try {
+      // Re-fetch applicants when data changes
+      const response = await fetch('/api/mobile/applicants');
+      if (response.ok) {
+        const data = await response.json();
+        setApplicants(data);
+      }
+    } catch (error) {
+      console.error('Failed to refresh applicants:', error);
+    } finally {
+      setIsRefreshing(false);
+    }
+  }, []);
 
   const statuses = useMemo(() => {
     const counts = {
@@ -44,6 +62,12 @@ export default function MobileClient({ applicants }) {
   }
 
   return (
-    <MobileDashboard applicants={applicants} statuses={statuses} onLogout={handleLogout} />
+    <MobileDashboard
+      applicants={applicants}
+      statuses={statuses}
+      onLogout={handleLogout}
+      onApplicantChange={handleApplicantChange}
+      isRefreshing={isRefreshing}
+    />
   );
 }

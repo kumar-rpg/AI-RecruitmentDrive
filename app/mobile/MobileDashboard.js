@@ -2,6 +2,7 @@
 
 import ThemeToggle from '@/components/ThemeToggle';
 import NotificationManager from './NotificationManager';
+import RealtimeUpdates from './RealtimeUpdates';
 
 const STATUSES = [
   { key: 'New', color: 'var(--muted)' },
@@ -18,7 +19,7 @@ const STATUSES = [
 const RADIUS = 54;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
-export default function MobileDashboard({ applicants, statuses, onLogout }) {
+export default function MobileDashboard({ applicants, statuses, onLogout, onApplicantChange, isRefreshing }) {
   const total = applicants.length;
   const reviewed = total - statuses.New;
   const reviewedPct = total ? Math.round((reviewed / total) * 100) : 0;
@@ -40,12 +41,14 @@ export default function MobileDashboard({ applicants, statuses, onLogout }) {
   return (
     <div className="mobile-dashboard">
       <NotificationManager applicants={applicants} />
+      <RealtimeUpdates onApplicantChange={onApplicantChange} />
       <header className="mobile-header">
         <div>
           <h1>CORTEX ROBOTICS</h1>
           <div className="sub">Mobile Dashboard</div>
         </div>
         <div className="mobile-header-actions">
+          {isRefreshing && <span className="refreshing-indicator" title="Refreshing data">◌</span>}
           <ThemeToggle />
           <button className="mobile-logout" onClick={onLogout} type="button" title="Sign Out">
             Sign Out

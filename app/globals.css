@@ -332,3 +332,12 @@ select.status {
 .mobile-stat-row .label { flex: 1; color: var(--muted); }
 .mobile-stat-row .count { font-weight: 600; width: 32px; text-align: right; }
 .mobile-stat-row .pct { color: var(--muted); font-size: 0.85rem; width: 40px; text-align: right; }
+
+.refreshing-indicator {
+  display: inline-block; color: var(--accent); font-size: 1rem; animation: spin 1s linear infinite;
+  margin-right: 4px;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

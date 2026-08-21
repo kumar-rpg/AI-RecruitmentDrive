@@ -4,7 +4,7 @@ import MobileClient from './MobileClient';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-export default async function MobilePage() {
+async function fetchApplicants() {
   const { data: applicants, error } = await supabaseAdmin()
     .from('applicants')
     .select('status')
@@ -14,5 +14,11 @@ export default async function MobilePage() {
     throw new Error('Could not load applicants: ' + error.message);
   }
 
-  return <MobileClient applicants={applicants || []} />;
+  return applicants || [];
+}
+
+export default async function MobilePage() {
+  const applicants = await fetchApplicants();
+
+  return <MobileClient applicants={applicants} />;
 }
