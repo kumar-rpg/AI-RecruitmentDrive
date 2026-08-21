@@ -95,17 +95,14 @@ export default function MobileAuth({ onSubmit }) {
               {digit}
             </button>
           ))}
+          <button className="keypad-btn danger" onClick={handleClear} type="button" title="Clear">
+            ✕
+          </button>
           <button className="keypad-btn" onClick={() => handleDigitClick('0')} type="button">
             0
           </button>
-          <button className="keypad-btn danger" onClick={handleBackspace} type="button">
+          <button className="keypad-btn danger" onClick={handleBackspace} type="button" title="Backspace">
             ⌫
-          </button>
-        </div>
-
-        <div className="mobile-actions">
-          <button className="ghost-secondary" onClick={handleClear} type="button" title="Clear">
-            ✕
           </button>
         </div>
       </div>
