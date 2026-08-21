@@ -1,6 +1,7 @@
 'use client';
 
 import ThemeToggle from '@/components/ThemeToggle';
+import NotificationManager from './NotificationManager';
 
 const STATUSES = [
   { key: 'New', color: 'var(--muted)' },
@@ -38,6 +39,7 @@ export default function MobileDashboard({ applicants, statuses, onLogout }) {
 
   return (
     <div className="mobile-dashboard">
+      <NotificationManager applicants={applicants} />
       <header className="mobile-header">
         <div>
           <h1>CORTEX ROBOTICS</h1>
