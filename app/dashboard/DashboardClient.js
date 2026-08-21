@@ -1,12 +1,13 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import Link from 'next/link';
 import ThemeToggle from '@/components/ThemeToggle';
 import StatsPanel from './StatsPanel';
 import PositionsPanel from './PositionsPanel';
 import EditApplicantModal from './EditApplicantModal';
-import { updateStatus, deleteApplicant, getDocUrl, signOut } from './actions';
+import RealtimeSync from './RealtimeSync';
+import { updateStatus, deleteApplicant, getDocUrl, signOut, fetchDashboardData } from './actions';
 
 const CATEGORY_LABEL = { intern: 'Intern', grad: 'Grad / Job-seeking', working: 'Already Working' };
 const STATUSES = [
@@ -29,7 +30,7 @@ function formatDate(dateStr) {
 
 export default function DashboardClient({ initialApplicants, initialPositions, userEmail }) {
   const [applicants, setApplicants] = useState(initialApplicants);
-  const positions = initialPositions;
+  const [positions, setPositions] = useState(initialPositions);
   const [search, setSearch] = useState('');
   const [filterCat, setFilterCat] = useState('');
   const [filterFlag, setFilterFlag] = useState('');
@@ -37,6 +38,20 @@ export default function DashboardClient({ initialApplicants, initialPositions, u
   const [filterStatus, setFilterStatus] = useState('');
   const [busyId, setBusyId] = useState(null);
   const [editing, setEditing] = useState(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handleDataChange = useCallback(async () => {
+    setIsRefreshing(true);
+    try {
+      const data = await fetchDashboardData();
+      setApplicants(data.applicants);
+      setPositions(data.positions);
+    } catch (error) {
+      console.error('Failed to refresh dashboard data:', error);
+    } finally {
+      setTimeout(() => setIsRefreshing(false), 200);
+    }
+  }, []);
 
   const filtered = useMemo(() => {
     const s = search.toLowerCase();
@@ -141,10 +156,12 @@ export default function DashboardClient({ initialApplicants, initialPositions, u
 
   return (
     <div className="wrap">
+      <RealtimeSync onDataChange={handleDataChange} />
       <header className="page-header">
         <div>
           <h1>CORTEX ROBOTICS</h1>
           <div className="sub">Review Dashboard — signed in as {userEmail}</div>
+          {isRefreshing && <span className="dashboard-syncing" title="Syncing data">●</span>}
         </div>
         <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
           <ThemeToggle />

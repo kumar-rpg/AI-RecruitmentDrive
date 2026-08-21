@@ -208,3 +208,33 @@ export async function signOut() {
   await supabase.auth.signOut();
   redirect('/login');
 }
+
+export async function fetchDashboardData() {
+  await requireAdmin();
+
+  const admin = supabaseAdmin();
+
+  const [applicantsResponse, positionsResponse] = await Promise.all([
+    admin
+      .from('applicants')
+      .select('*')
+      .order('submitted_at', { ascending: false }),
+    admin
+      .from('positions')
+      .select('*')
+      .order('created_at', { ascending: true }),
+  ]);
+
+  if (applicantsResponse.error) {
+    throw new Error('Could not load applicants: ' + applicantsResponse.error.message);
+  }
+
+  if (positionsResponse.error) {
+    throw new Error('Could not load positions: ' + positionsResponse.error.message);
+  }
+
+  return {
+    applicants: applicantsResponse.data || [],
+    positions: positionsResponse.data || [],
+  };
+}
