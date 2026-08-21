@@ -17,7 +17,7 @@ const STATUSES = [
 const RADIUS = 54;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
-export default function MobileDashboard({ applicants, statuses }) {
+export default function MobileDashboard({ applicants, statuses, onLogout }) {
   const total = applicants.length;
   const reviewed = total - statuses.New;
   const reviewedPct = total ? Math.round((reviewed / total) * 100) : 0;
@@ -43,7 +43,12 @@ export default function MobileDashboard({ applicants, statuses }) {
           <h1>CORTEX ROBOTICS</h1>
           <div className="sub">Mobile Dashboard</div>
         </div>
-        <ThemeToggle />
+        <div className="mobile-header-actions">
+          <ThemeToggle />
+          <button className="mobile-logout" onClick={onLogout} type="button" title="Sign Out">
+            Sign Out
+          </button>
+        </div>
       </header>
 
       <div className="mobile-wrap">

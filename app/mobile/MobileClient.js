@@ -35,9 +35,15 @@ export default function MobileClient({ applicants }) {
     }
   };
 
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+  };
+
   if (!isAuthenticated) {
     return <MobileAuth onSubmit={handlePasscodeSubmit} />;
   }
 
-  return <MobileDashboard applicants={applicants} statuses={statuses} />;
+  return (
+    <MobileDashboard applicants={applicants} statuses={statuses} onLogout={handleLogout} />
+  );
 }
