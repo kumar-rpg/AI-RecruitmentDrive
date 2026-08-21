@@ -12,8 +12,10 @@ export default function MobileClient({ applicants: initialApplicants }) {
   const handleApplicantChange = useCallback(async () => {
     setIsRefreshing(true);
     try {
-      // Re-fetch applicants when data changes
-      const response = await fetch('/api/mobile/applicants');
+      // Re-fetch applicants when data changes with cache busting
+      const response = await fetch(`/api/mobile/applicants?t=${Date.now()}`, {
+        cache: 'no-store',
+      });
       if (response.ok) {
         const data = await response.json();
         setApplicants(data);
@@ -21,7 +23,8 @@ export default function MobileClient({ applicants: initialApplicants }) {
     } catch (error) {
       console.error('Failed to refresh applicants:', error);
     } finally {
-      setIsRefreshing(false);
+      // Keep refreshing indicator visible for at least 200ms for visual feedback
+      setTimeout(() => setIsRefreshing(false), 200);
     }
   }, []);
 
