@@ -82,6 +82,25 @@ export default function PersonalForm({ initialData }) {
     if (errors[field]) setErrors((e) => ({ ...e, [field]: '' }));
   }
 
+  function handleIcChange(ic) {
+    const updates = { ic_or_passport: ic };
+    const digits = ic.replace(/\D/g, '');
+    if (digits.length >= 6) {
+      const yy = parseInt(digits.slice(0, 2), 10);
+      const mm = digits.slice(2, 4);
+      const dd = digits.slice(4, 6);
+      const currentYY = new Date().getFullYear() % 100;
+      const fullYear = yy <= currentYY ? 2000 + yy : 1900 + yy;
+      const age = new Date().getFullYear() - fullYear;
+      updates.age = age;
+      updates.date_of_birth = `${fullYear}-${mm}-${dd}`;
+    }
+    setForm((f) => ({ ...f, ...updates }));
+    if (errors.ic_or_passport) setErrors((e) => ({ ...e, ic_or_passport: '' }));
+    if (updates.age && errors.age) setErrors((e) => ({ ...e, age: '' }));
+    if (updates.date_of_birth && errors.date_of_birth) setErrors((e) => ({ ...e, date_of_birth: '' }));
+  }
+
   function toggleLicense(val) {
     set('driving_license',
       form.driving_license.includes(val)
@@ -177,7 +196,7 @@ export default function PersonalForm({ initialData }) {
           <div>
             <label>IC / Passport No <span className="ea-req">*</span></label>
             <input type="text" value={form.ic_or_passport} disabled={isSubmitted}
-              onChange={(e) => set('ic_or_passport', e.target.value)} />
+              onChange={(e) => handleIcChange(e.target.value)} />
             {errors.ic_or_passport && <div className="err">{errors.ic_or_passport}</div>}
           </div>
         </div>
