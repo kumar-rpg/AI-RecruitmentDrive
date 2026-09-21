@@ -1,13 +1,14 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse } from 'next/server';
 
-// Refreshes the Supabase auth session cookie on every request and blocks
-// unauthenticated visitors from the /dashboard route. The public application
-// form at "/" is left untouched — that's the link you share with applicants.
-//
-// Named "proxy" and living in proxy.js because Next.js 16 deprecated the
-// "middleware" file convention in favour of this one. Behaviour is unchanged.
 export async function proxy(request) {
+  const { pathname } = request.nextUrl;
+
+  // EA public routes — no auth check
+  if (pathname === '/ea/login' || pathname === '/ea/set-password') {
+    return NextResponse.next({ request });
+  }
+
   let response = NextResponse.next({ request });
 
   const supabase = createServerClient(
@@ -33,14 +34,19 @@ export async function proxy(request) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (request.nextUrl.pathname.startsWith('/dashboard') && !user) {
-    const loginUrl = new URL('/login', request.url);
-    return NextResponse.redirect(loginUrl);
+  // Protect /dashboard
+  if (pathname.startsWith('/dashboard') && !user) {
+    return NextResponse.redirect(new URL('/login', request.url));
+  }
+
+  // Protect /ea/* (except public routes handled above)
+  if (pathname.startsWith('/ea') && !user) {
+    return NextResponse.redirect(new URL('/ea/login', request.url));
   }
 
   return response;
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*'],
+  matcher: ['/dashboard/:path*', '/ea/:path*'],
 };
