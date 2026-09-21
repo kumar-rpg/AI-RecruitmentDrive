@@ -111,7 +111,6 @@ export default function RefereesForm({ initialData }) {
           <h1>Employment Application</h1>
           <div className="sub">CORTEX ROBOTICS</div>
         </div>
-        <button className="ghost" onClick={() => router.push('/ea/general')}>← Back</button>
       </header>
 
       <FormProgress step={5} submitted={isSubmitted} />
@@ -167,9 +166,11 @@ export default function RefereesForm({ initialData }) {
       {!isSubmitted ? (
         <div className="ea-form-actions">
           {saveMsg && <span className={saveMsg.startsWith('Error') ? 'err' : 'hint'}>{saveMsg}</span>}
-          <button className="primary" onClick={handleSaveDraft} disabled={saving}>
-            {saving ? 'Savingâ€¦' : 'Save Draft'}
+          <button className="primary" onClick={handleSaveDraft} disabled={saving}
+            style={{ background: '#FACC15', color: '#000', borderColor: '#FACC15' }}>
+            {saving ? 'Saving…' : 'Save Draft'}
           </button>
+          <button className="ghost" onClick={() => router.push('/ea/general')} disabled={saving}>← Back</button>
           <button className="primary" onClick={handleNext} disabled={saving}>
             Next: Declaration →
           </button>

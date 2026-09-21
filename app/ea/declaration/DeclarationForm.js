@@ -63,7 +63,6 @@ export default function DeclarationForm({ initialData }) {
           <h1>Employment Application</h1>
           <div className="sub">CORTEX ROBOTICS</div>
         </div>
-        <button className="ghost" onClick={() => router.push('/ea/referees')}>← Back</button>
       </header>
 
       <FormProgress step={6} submitted={isSubmitted} />
@@ -116,16 +115,18 @@ export default function DeclarationForm({ initialData }) {
       {!isSubmitted && (
         <div className="ea-form-actions">
           {saveMsg && <span className={saveMsg.startsWith('Error') ? 'err' : 'hint'}>{saveMsg}</span>}
-          <button className="primary" onClick={handleSaveDraft} disabled={saving || submitting}>
-            {saving ? 'Savingâ€¦' : 'Save Draft'}
+          <button className="primary" onClick={handleSaveDraft} disabled={saving || submitting}
+            style={{ background: '#FACC15', color: '#000', borderColor: '#FACC15' }}>
+            {saving ? 'Saving…' : 'Save Draft'}
           </button>
+          <button className="ghost" onClick={() => router.push('/ea/referees')} disabled={saving || submitting}>← Back</button>
           <button
             className="primary"
             onClick={handleSubmit}
             disabled={submitting || saving}
             style={{ background: 'var(--accent2)', color: '#0d0f13' }}
           >
-            {submitting ? 'Submittingâ€¦' : 'Submit Application'}
+            {submitting ? 'Submitting…' : 'Submit Application'}
           </button>
         </div>
       )}

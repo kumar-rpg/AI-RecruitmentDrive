@@ -83,7 +83,6 @@ export default function EducationForm({ initialData }) {
           <h1>Employment Application</h1>
           <div className="sub">CORTEX ROBOTICS</div>
         </div>
-        <button className="ghost" onClick={() => router.push('/ea/personal')}>← Back</button>
       </header>
 
       <FormProgress step={2} submitted={isSubmitted} />
@@ -203,7 +202,7 @@ export default function EducationForm({ initialData }) {
                     {key === 'others' ? (
                       <input type="text" value={languages.others?.name || ''} disabled={isSubmitted}
                         onChange={(e) => setLang('others', 'name', e.target.value)}
-                        placeholder="Other languageâ€¦" style={{ width: '100%' }} />
+                        placeholder="Other language…" style={{ width: '100%' }} />
                     ) : (
                       <span style={{ color: 'var(--muted)', fontSize: '0.85rem' }}>{label}</span>
                     )}
@@ -227,9 +226,11 @@ export default function EducationForm({ initialData }) {
       {!isSubmitted ? (
         <div className="ea-form-actions">
           {saveMsg && <span className={saveMsg.startsWith('Error') ? 'err' : 'hint'}>{saveMsg}</span>}
-          <button className="primary" onClick={handleSaveDraft} disabled={saving}>
-            {saving ? 'Savingâ€¦' : 'Save Draft'}
+          <button className="primary" onClick={handleSaveDraft} disabled={saving}
+            style={{ background: '#FACC15', color: '#000', borderColor: '#FACC15' }}>
+            {saving ? 'Saving…' : 'Save Draft'}
           </button>
+          <button className="ghost" onClick={() => router.push('/ea/personal')} disabled={saving}>← Back</button>
           <button className="primary" onClick={handleNext} disabled={saving}>
             Next: Employment →
           </button>
