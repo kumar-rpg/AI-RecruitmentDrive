@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -359,14 +359,14 @@ export default function PersonalForm({ initialData }) {
             {saving ? 'Savingâ€¦' : 'Save Draft'}
           </button>
           <button className="primary" onClick={handleNext} disabled={saving}>
-            Next: Education â†’
+            Next: Education →
           </button>
         </div>
       )}
       {isSubmitted && (
         <div className="ea-form-actions">
           <button className="primary" onClick={() => router.push('/ea/education')}>
-            Next: Education â†’
+            Next: Education →
           </button>
         </div>
       )}

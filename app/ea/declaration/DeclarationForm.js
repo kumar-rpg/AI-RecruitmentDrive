@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -63,7 +63,7 @@ export default function DeclarationForm({ initialData }) {
           <h1>Employment Application</h1>
           <div className="sub">CORTEX ROBOTICS</div>
         </div>
-        <button className="ghost" onClick={() => router.push('/ea/referees')}>â† Back</button>
+        <button className="ghost" onClick={() => router.push('/ea/referees')}>← Back</button>
       </header>
 
       <FormProgress step={6} submitted={isSubmitted} />
@@ -132,7 +132,7 @@ export default function DeclarationForm({ initialData }) {
       {isSubmitted && (
         <div className="ea-form-actions">
           <button className="primary" onClick={() => router.push('/ea/success')}>
-            View Confirmation â†’
+            View Confirmation →
           </button>
         </div>
       )}
