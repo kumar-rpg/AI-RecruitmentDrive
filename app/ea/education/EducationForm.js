@@ -230,7 +230,7 @@ export default function EducationForm({ initialData }) {
             style={{ background: '#FACC15', color: '#000', borderColor: '#FACC15' }}>
             {saving ? 'Saving…' : 'Save Draft'}
           </button>
-          <button className="ghost" onClick={() => router.push('/ea/personal')} disabled={saving}>← Back</button>
+          <button className="primary" onClick={() => router.push('/ea/personal')} disabled={saving}>← Back</button>
           <button className="primary" onClick={handleNext} disabled={saving}>
             Next: Employment →
           </button>
