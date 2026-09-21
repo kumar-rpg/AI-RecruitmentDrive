@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -83,7 +83,7 @@ export default function EducationForm({ initialData }) {
           <h1>Employment Application</h1>
           <div className="sub">CORTEX ROBOTICS</div>
         </div>
-        <button className="ghost" onClick={() => router.push('/ea/personal')}>← Back</button>
+        <button className="ghost" onClick={() => router.push('/ea/personal')}>â† Back</button>
       </header>
 
       <FormProgress step={2} submitted={isSubmitted} />
@@ -185,7 +185,7 @@ export default function EducationForm({ initialData }) {
       {/* Languages & Dialects */}
       <div className="card">
         <h2 style={{ margin: '0 0 6px', fontSize: '1.1rem' }}>Languages & Dialects</h2>
-        <p className="hint" style={{ marginBottom: 16 }}>Rate proficiency 0 (none) – 10 (native).</p>
+        <p className="hint" style={{ marginBottom: 16 }}>Rate proficiency 0 (none) â€“ 10 (native).</p>
         <div style={{ overflowX: 'auto' }}>
           <table>
             <thead>
@@ -203,7 +203,7 @@ export default function EducationForm({ initialData }) {
                     {key === 'others' ? (
                       <input type="text" value={languages.others?.name || ''} disabled={isSubmitted}
                         onChange={(e) => setLang('others', 'name', e.target.value)}
-                        placeholder="Other language…" style={{ width: '100%' }} />
+                        placeholder="Other languageâ€¦" style={{ width: '100%' }} />
                     ) : (
                       <span style={{ color: 'var(--muted)', fontSize: '0.85rem' }}>{label}</span>
                     )}
@@ -227,17 +227,17 @@ export default function EducationForm({ initialData }) {
       {!isSubmitted ? (
         <div className="ea-form-actions">
           {saveMsg && <span className={saveMsg.startsWith('Error') ? 'err' : 'hint'}>{saveMsg}</span>}
-          <button className="ghost" onClick={handleSaveDraft} disabled={saving}>
-            {saving ? 'Saving…' : 'Save Draft'}
+          <button className="primary" onClick={handleSaveDraft} disabled={saving}>
+            {saving ? 'Savingâ€¦' : 'Save Draft'}
           </button>
           <button className="primary" onClick={handleNext} disabled={saving}>
-            Next: Employment →
+            Next: Employment â†’
           </button>
         </div>
       ) : (
         <div className="ea-form-actions">
           <button className="primary" onClick={() => router.push('/ea/employment')}>
-            Next: Employment →
+            Next: Employment â†’
           </button>
         </div>
       )}

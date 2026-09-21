@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -112,7 +112,7 @@ export default function EmploymentForm({ initialData }) {
           <h1>Employment Application</h1>
           <div className="sub">CORTEX ROBOTICS</div>
         </div>
-        <button className="ghost" onClick={() => router.push('/ea/education')}>← Back</button>
+        <button className="ghost" onClick={() => router.push('/ea/education')}>â† Back</button>
       </header>
 
       <FormProgress step={3} submitted={isSubmitted} />
@@ -201,17 +201,17 @@ export default function EmploymentForm({ initialData }) {
       {!isSubmitted ? (
         <div className="ea-form-actions">
           {saveMsg && <span className={saveMsg.startsWith('Error') ? 'err' : 'hint'}>{saveMsg}</span>}
-          <button className="ghost" onClick={handleSaveDraft} disabled={saving}>
-            {saving ? 'Saving…' : 'Save Draft'}
+          <button className="primary" onClick={handleSaveDraft} disabled={saving}>
+            {saving ? 'Savingâ€¦' : 'Save Draft'}
           </button>
           <button className="primary" onClick={handleNext} disabled={saving}>
-            Next: General Info →
+            Next: General Info â†’
           </button>
         </div>
       ) : (
         <div className="ea-form-actions">
           <button className="primary" onClick={() => router.push('/ea/general')}>
-            Next: General Info →
+            Next: General Info â†’
           </button>
         </div>
       )}

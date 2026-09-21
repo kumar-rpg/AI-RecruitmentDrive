@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -29,12 +29,12 @@ const RACES = [
 ];
 
 const LICENSE_OPTIONS = [
-  { value: 'A', label: 'A — Motorcycle' },
-  { value: 'B2', label: 'B2 — Motorcycle' },
-  { value: 'B', label: 'B — Motorcycle' },
-  { value: 'C', label: 'C — Motorcycle' },
-  { value: 'D', label: 'D — Car' },
-  { value: 'DA', label: 'DA — Car' },
+  { value: 'A', label: 'A â€” Motorcycle' },
+  { value: 'B2', label: 'B2 â€” Motorcycle' },
+  { value: 'B', label: 'B â€” Motorcycle' },
+  { value: 'C', label: 'C â€” Motorcycle' },
+  { value: 'D', label: 'D â€” Car' },
+  { value: 'DA', label: 'DA â€” Car' },
 ];
 
 const REQUIRED_FIELDS = [
@@ -166,7 +166,7 @@ export default function PersonalForm({ initialData }) {
           <h1>Employment Application</h1>
           <div className="sub">
             CORTEX ROBOTICS
-            {form.position_applied && ` — ${form.position_applied}`}
+            {form.position_applied && ` â€” ${form.position_applied}`}
           </div>
         </div>
         <button className="ghost" onClick={() => signOutApplicant()} style={{ whiteSpace: 'nowrap' }}>
@@ -205,7 +205,7 @@ export default function PersonalForm({ initialData }) {
           <div>
             <label>Gender <span className="ea-req">*</span></label>
             <select value={form.gender} disabled={isSubmitted} onChange={(e) => set('gender', e.target.value)}>
-              <option value="">Select…</option>
+              <option value="">Selectâ€¦</option>
               <option>Male</option>
               <option>Female</option>
               <option>Others</option>
@@ -236,7 +236,7 @@ export default function PersonalForm({ initialData }) {
           <div>
             <label>Race <span className="ea-req">*</span></label>
             <input list="race-list" value={form.race} disabled={isSubmitted}
-              onChange={(e) => set('race', e.target.value)} placeholder="Type to search…" />
+              onChange={(e) => set('race', e.target.value)} placeholder="Type to searchâ€¦" />
             <datalist id="race-list">
               {RACES.map((r) => <option key={r} value={r} />)}
             </datalist>
@@ -247,7 +247,7 @@ export default function PersonalForm({ initialData }) {
         <div>
           <label>Religion <span className="ea-req">*</span></label>
           <select value={form.religion} disabled={isSubmitted} onChange={(e) => set('religion', e.target.value)}>
-            <option value="">Select…</option>
+            <option value="">Selectâ€¦</option>
             {RELIGIONS.map((r) => <option key={r}>{r}</option>)}
           </select>
           {errors.religion && <div className="err">{errors.religion}</div>}
@@ -285,7 +285,7 @@ export default function PersonalForm({ initialData }) {
           <div>
             <label>Country <span className="ea-req">*</span></label>
             <select value={form.country} disabled={isSubmitted} onChange={(e) => set('country', e.target.value)}>
-              <option value="">Select…</option>
+              <option value="">Selectâ€¦</option>
               <option value="Malaysia">Malaysia</option>
               <option value="Other">Other</option>
             </select>
@@ -295,7 +295,7 @@ export default function PersonalForm({ initialData }) {
             <div>
               <label>State <span className="ea-req">*</span></label>
               <select value={form.state} disabled={isSubmitted} onChange={(e) => set('state', e.target.value)}>
-                <option value="">Select…</option>
+                <option value="">Selectâ€¦</option>
                 {STATES.map((s) => <option key={s}>{s}</option>)}
               </select>
               {errors.state && <div className="err">{errors.state}</div>}
@@ -313,7 +313,7 @@ export default function PersonalForm({ initialData }) {
         <div>
           <label>Marital Status <span className="ea-req">*</span></label>
           <select value={form.marital_status} disabled={isSubmitted} onChange={(e) => set('marital_status', e.target.value)}>
-            <option value="">Select…</option>
+            <option value="">Selectâ€¦</option>
             <option>Single</option>
             <option>Married</option>
             <option>Divorced</option>
@@ -340,13 +340,13 @@ export default function PersonalForm({ initialData }) {
           <label>Passport-size Photo</label>
           {form.photo_path && (
             <div className="hint" style={{ marginBottom: 6 }}>
-              ✓ Photo uploaded: {form.photo_path.split('/').pop()}
+              âœ“ Photo uploaded: {form.photo_path.split('/').pop()}
             </div>
           )}
           {!isSubmitted && (
             <div className="file-row">
               <input type="file" accept="image/*" onChange={handlePhotoUpload} disabled={uploading} />
-              {uploading && <div className="hint">Uploading…</div>}
+              {uploading && <div className="hint">Uploadingâ€¦</div>}
             </div>
           )}
         </div>
@@ -355,18 +355,18 @@ export default function PersonalForm({ initialData }) {
       {!isSubmitted && (
         <div className="ea-form-actions">
           {saveMsg && <span className={saveMsg.startsWith('Error') ? 'err' : 'hint'}>{saveMsg}</span>}
-          <button className="ghost" onClick={handleSaveDraft} disabled={saving}>
-            {saving ? 'Saving…' : 'Save Draft'}
+          <button className="primary" onClick={handleSaveDraft} disabled={saving}>
+            {saving ? 'Savingâ€¦' : 'Save Draft'}
           </button>
           <button className="primary" onClick={handleNext} disabled={saving}>
-            Next: Education →
+            Next: Education â†’
           </button>
         </div>
       )}
       {isSubmitted && (
         <div className="ea-form-actions">
           <button className="primary" onClick={() => router.push('/ea/education')}>
-            Next: Education →
+            Next: Education â†’
           </button>
         </div>
       )}

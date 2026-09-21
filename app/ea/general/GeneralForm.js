@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -80,7 +80,7 @@ export default function GeneralForm({ initialData }) {
           <h1>Employment Application</h1>
           <div className="sub">CORTEX ROBOTICS</div>
         </div>
-        <button className="ghost" onClick={() => router.push('/ea/employment')}>← Back</button>
+        <button className="ghost" onClick={() => router.push('/ea/employment')}>â† Back</button>
       </header>
 
       <FormProgress step={4} submitted={isSubmitted} />
@@ -214,7 +214,7 @@ export default function GeneralForm({ initialData }) {
           )}
         </div>
         {form.cortex_connections.length === 0 && (
-          <div className="empty">None — or click + Add to declare.</div>
+          <div className="empty">None â€” or click + Add to declare.</div>
         )}
         {form.cortex_connections.map((conn, i) => (
           <div key={i} className="ea-repeating-row">
@@ -249,17 +249,17 @@ export default function GeneralForm({ initialData }) {
       {!isSubmitted ? (
         <div className="ea-form-actions">
           {saveMsg && <span className={saveMsg.startsWith('Error') ? 'err' : 'hint'}>{saveMsg}</span>}
-          <button className="ghost" onClick={handleSaveDraft} disabled={saving}>
-            {saving ? 'Saving…' : 'Save Draft'}
+          <button className="primary" onClick={handleSaveDraft} disabled={saving}>
+            {saving ? 'Savingâ€¦' : 'Save Draft'}
           </button>
           <button className="primary" onClick={handleNext} disabled={saving}>
-            Next: Referees →
+            Next: Referees â†’
           </button>
         </div>
       ) : (
         <div className="ea-form-actions">
           <button className="primary" onClick={() => router.push('/ea/referees')}>
-            Next: Referees →
+            Next: Referees â†’
           </button>
         </div>
       )}
