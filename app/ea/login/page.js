@@ -3,58 +3,110 @@
 import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { supabaseBrowser } from '@/lib/supabaseClient';
+import { registerApplicant } from '@/lib/ea-actions';
 import { Suspense } from 'react';
+
+function PinInput({ value, onChange, label, id, autoComplete }) {
+  return (
+    <div>
+      <label htmlFor={id}>{label}</label>
+      <input
+        id={id}
+        type="password"
+        inputMode="numeric"
+        maxLength={6}
+        pattern="[0-9]{6}"
+        value={value}
+        onChange={(e) => onChange(e.target.value.replace(/\D/g, '').slice(0, 6))}
+        autoComplete={autoComplete}
+        placeholder="••••••"
+        style={{ letterSpacing: '0.3em', fontSize: '1.2rem' }}
+        required
+      />
+      <div className="hint">6-digit numeric PIN</div>
+    </div>
+  );
+}
 
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [mode, setMode] = useState('returning'); // 'new' | 'returning' | 'forgot'
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [pin, setPin] = useState('');
+  const [confirmPin, setConfirmPin] = useState('');
   const [error, setError] = useState(
     searchParams.get('error') === 'auth' ? 'Invalid or expired link. Please log in.' : ''
   );
   const [submitting, setSubmitting] = useState(false);
   const [resetSent, setResetSent] = useState(false);
-  const [showReset, setShowReset] = useState(false);
-  const [resetEmail, setResetEmail] = useState('');
-  const [resetting, setResetting] = useState(false);
 
-  async function handleSubmit(e) {
+  function switchMode(m) {
+    setMode(m);
+    setError('');
+    setPin('');
+    setConfirmPin('');
+    setResetSent(false);
+  }
+
+  async function handleReturning(e) {
     e.preventDefault();
     setError('');
+    if (pin.length !== 6) { setError('PIN must be exactly 6 digits.'); return; }
     setSubmitting(true);
-
     const supabase = supabaseBrowser();
     const { error: signInError } = await supabase.auth.signInWithPassword({
       email: email.trim(),
-      password,
+      password: pin,
     });
-
     setSubmitting(false);
-
     if (signInError) {
-      setError('Login failed — check your email and password.');
+      setError('Incorrect email or PIN. Please try again.');
       return;
     }
-
     router.push('/ea/personal');
     router.refresh();
   }
 
-  async function handleForgotPassword(e) {
+  async function handleNew(e) {
     e.preventDefault();
-    setResetting(true);
+    setError('');
+    if (pin.length !== 6) { setError('PIN must be exactly 6 digits.'); return; }
+    if (pin !== confirmPin) { setError('PINs do not match.'); return; }
+    setSubmitting(true);
+    const result = await registerApplicant(email.trim(), pin);
+    if (result?.error) {
+      setSubmitting(false);
+      setError(result.error);
+      return;
+    }
+    // Registration succeeded — sign in immediately
+    const supabase = supabaseBrowser();
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email: email.trim(),
+      password: pin,
+    });
+    setSubmitting(false);
+    if (signInError) {
+      setError('Account created but sign-in failed. Please use "Returning applicant" to log in.');
+      return;
+    }
+    router.push('/ea/personal');
+    router.refresh();
+  }
+
+  async function handleForgotPin(e) {
+    e.preventDefault();
+    setError('');
+    setSubmitting(true);
     const siteUrl = window.location.origin;
     const supabase = supabaseBrowser();
     const { error: resetError } = await supabase.auth.resetPasswordForEmail(
-      resetEmail.trim(),
+      email.trim(),
       { redirectTo: `${siteUrl}/auth/callback?type=recovery` }
     );
-    setResetting(false);
-    if (resetError) {
-      setError(resetError.message);
-      return;
-    }
+    setSubmitting(false);
+    if (resetError) { setError(resetError.message); return; }
     setResetSent(true);
   }
 
@@ -63,12 +115,15 @@ function LoginForm() {
       <header className="page-header">
         <div>
           <h1>Employment Application</h1>
-          <div className="sub">CORTEX ROBOTICS — Sign in to continue your form</div>
+          <div className="sub">CORTEX ROBOTICS — Access your application form</div>
         </div>
       </header>
 
-      {!showReset ? (
-        <form className="card" onSubmit={handleSubmit}>
+      {mode === 'forgot' ? (
+        <form className="card" onSubmit={handleForgotPin}>
+          <p style={{ color: 'var(--muted)', fontSize: '0.9rem', marginTop: 0 }}>
+            Enter your email address and we&apos;ll send you a link to reset your PIN.
+          </p>
           <label>Email address</label>
           <input
             type="email"
@@ -77,68 +132,109 @@ function LoginForm() {
             autoComplete="username"
             required
           />
-
-          <label>Password</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            autoComplete="current-password"
-            required
-          />
-
           {error && <div className="err">{error}</div>}
-
-          <button className="primary" type="submit" disabled={submitting} style={{ width: '100%' }}>
-            {submitting ? 'Signing in…' : 'Sign In'}
-          </button>
-
-          <div style={{ textAlign: 'center', marginTop: 14 }}>
-            <button
-              type="button"
-              style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontSize: '0.85rem' }}
-              onClick={() => { setShowReset(true); setResetEmail(email); setError(''); }}
-            >
-              Forgot password?
-            </button>
-          </div>
-        </form>
-      ) : (
-        <form className="card" onSubmit={handleForgotPassword}>
-          <p style={{ color: 'var(--muted)', fontSize: '0.9rem', marginTop: 0 }}>
-            Enter your email address and we&apos;ll send you a link to reset your password.
-          </p>
-
-          <label>Email address</label>
-          <input
-            type="email"
-            value={resetEmail}
-            onChange={(e) => setResetEmail(e.target.value)}
-            autoComplete="username"
-            required
-          />
-
-          {error && <div className="err">{error}</div>}
-          {resetSent && (
+          {resetSent ? (
             <div className="success-box">Reset email sent — check your inbox.</div>
-          )}
-
-          {!resetSent && (
-            <button className="primary" type="submit" disabled={resetting} style={{ width: '100%' }}>
-              {resetting ? 'Sending…' : 'Send Reset Email'}
+          ) : (
+            <button className="primary" type="submit" disabled={submitting} style={{ width: '100%' }}>
+              {submitting ? 'Sending…' : 'Send Reset Email'}
             </button>
           )}
-
           <div style={{ textAlign: 'center', marginTop: 14 }}>
             <button
               type="button"
               style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontSize: '0.85rem' }}
-              onClick={() => { setShowReset(false); setResetSent(false); setError(''); }}
+              onClick={() => switchMode('returning')}
             >
               ← Back to sign in
             </button>
           </div>
         </form>
+      ) : (
+        <div className="card" style={{ padding: 0 }}>
+          {/* Tab toggle */}
+          <div style={{ display: 'flex', borderBottom: '1px solid var(--border)' }}>
+            {['returning', 'new'].map((m) => (
+              <button
+                key={m}
+                type="button"
+                onClick={() => switchMode(m)}
+                style={{
+                  flex: 1,
+                  padding: '14px 0',
+                  background: 'none',
+                  border: 'none',
+                  borderBottom: mode === m ? '2px solid var(--accent)' : '2px solid transparent',
+                  color: mode === m ? 'var(--accent)' : 'var(--muted)',
+                  fontWeight: mode === m ? 600 : 400,
+                  cursor: 'pointer',
+                  fontSize: '0.9rem',
+                  marginBottom: '-1px',
+                }}
+              >
+                {m === 'returning' ? 'Returning Applicant' : 'New Applicant'}
+              </button>
+            ))}
+          </div>
+
+          <form
+            style={{ padding: '24px' }}
+            onSubmit={mode === 'returning' ? handleReturning : handleNew}
+          >
+            {mode === 'new' && (
+              <p style={{ color: 'var(--muted)', fontSize: '0.85rem', marginTop: 0 }}>
+                Your email must be on the Interview shortlist. Create a 6-digit PIN to secure your application.
+              </p>
+            )}
+
+            <label>Email address</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              autoComplete="username"
+              required
+            />
+
+            <PinInput
+              id="pin"
+              label={mode === 'new' ? 'Create a 6-digit PIN' : '6-digit PIN'}
+              value={pin}
+              onChange={setPin}
+              autoComplete={mode === 'new' ? 'new-password' : 'current-password'}
+            />
+
+            {mode === 'new' && (
+              <PinInput
+                id="confirm-pin"
+                label="Confirm PIN"
+                value={confirmPin}
+                onChange={setConfirmPin}
+                autoComplete="new-password"
+              />
+            )}
+
+            {error && <div className="err">{error}</div>}
+
+            <button className="primary" type="submit" disabled={submitting} style={{ width: '100%', marginTop: 8 }}>
+              {submitting
+                ? (mode === 'new' ? 'Creating account…' : 'Signing in…')
+                : (mode === 'new' ? 'Create Account & Continue' : 'Sign In')}
+            </button>
+
+            {mode === 'returning' && (
+              <div style={{ textAlign: 'center', marginTop: 14 }}>
+                <button
+                  type="button"
+                  style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontSize: '0.85rem' }}
+                  onClick={() => { switchMode('forgot'); }}
+                >
+                  Forgot PIN?
+                </button>
+              </div>
+            )}
+          </form>
+        </div>
       )}
     </div>
   );

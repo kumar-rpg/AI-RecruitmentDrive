@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { sendInvite, resetApplicantPassword } from '@/lib/ea-actions';
+import { resetApplicantPin } from '@/lib/ea-actions';
 
 export default function AdminClient({ applicants }) {
   const [states, setStates] = useState(() => {
@@ -18,16 +18,10 @@ export default function AdminClient({ applicants }) {
     setStates((s) => ({ ...s, [id]: { ...s[id], loading, msg: '' } }));
   }
 
-  async function handleSendInvite(applicant) {
+  async function handleResetPin(applicant) {
     setLoading(applicant.id, true);
-    const result = await sendInvite(applicant.email);
-    setMsg(applicant.id, result.error ? `Error: ${result.error}` : 'Invite sent ✓');
-  }
-
-  async function handleResetPassword(applicant) {
-    setLoading(applicant.id, true);
-    const result = await resetApplicantPassword(applicant.email);
-    setMsg(applicant.id, result.error ? `Error: ${result.error}` : 'Reset email sent ✓');
+    const result = await resetApplicantPin(applicant.email);
+    setMsg(applicant.id, result.error ? `Error: ${result.error}` : 'PIN reset email sent ✓');
   }
 
   if (applicants.length === 0) {
@@ -77,18 +71,10 @@ export default function AdminClient({ applicants }) {
                       <button
                         className="ghost"
                         disabled={loading}
-                        onClick={() => handleSendInvite(a)}
-                        title="Send invite email to set password"
+                        onClick={() => handleResetPin(a)}
+                        title="Send PIN reset email to applicant"
                       >
-                        {loading ? '…' : 'Send Invite'}
-                      </button>
-                      <button
-                        className="ghost"
-                        disabled={loading}
-                        onClick={() => handleResetPassword(a)}
-                        title="Send password reset email"
-                      >
-                        {loading ? '…' : 'Reset Password'}
+                        {loading ? '…' : 'Reset PIN'}
                       </button>
                     </div>
                     {msg && (

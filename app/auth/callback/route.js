@@ -28,8 +28,7 @@ export async function GET(request) {
 
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
-      // Invite and recovery flows both require the user to set/update their password
-      if (type === 'invite' || type === 'recovery') {
+      if (type === 'recovery') {
         return NextResponse.redirect(`${origin}/ea/set-password`);
       }
       return NextResponse.redirect(`${origin}/ea/personal`);
