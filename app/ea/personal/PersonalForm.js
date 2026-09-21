@@ -355,7 +355,8 @@ export default function PersonalForm({ initialData }) {
       {!isSubmitted && (
         <div className="ea-form-actions">
           {saveMsg && <span className={saveMsg.startsWith('Error') ? 'err' : 'hint'}>{saveMsg}</span>}
-          <button className="primary" onClick={handleSaveDraft} disabled={saving}>
+          <button className="primary" onClick={handleSaveDraft} disabled={saving}
+            style={{ background: '#FACC15', color: '#000', borderColor: '#FACC15' }}>
             {saving ? 'Saving…' : 'Save Draft'}
           </button>
           <button className="primary" onClick={handleNext} disabled={saving}>
