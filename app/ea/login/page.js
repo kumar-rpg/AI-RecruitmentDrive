@@ -64,7 +64,9 @@ function LoginForm() {
       setError('Incorrect email or PIN. Please try again.');
       return;
     }
-    router.push('/ea/personal');
+    const { data: { user: signedInUser } } = await supabase.auth.getUser();
+    const dest = signedInUser?.app_metadata?.role === 'admin' ? '/ea/admin' : '/ea/personal';
+    router.push(dest);
     router.refresh();
   }
 
