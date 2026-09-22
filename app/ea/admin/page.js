@@ -8,7 +8,7 @@ export default async function EaAdminPage() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) redirect('/login');
+  if (!user || user.app_metadata?.role !== 'admin') redirect('/ea/login');
 
   const { applicants, error } = await getInterviewApplicants();
 

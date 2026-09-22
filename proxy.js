@@ -44,6 +44,11 @@ export async function proxy(request) {
     return NextResponse.redirect(new URL('/ea/login', request.url));
   }
 
+  // /ea/admin requires admin role
+  if (pathname.startsWith('/ea/admin') && user?.app_metadata?.role !== 'admin') {
+    return NextResponse.redirect(new URL('/ea/login', request.url));
+  }
+
   return response;
 }
 
