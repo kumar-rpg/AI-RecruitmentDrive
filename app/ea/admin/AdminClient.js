@@ -1,27 +1,33 @@
 'use client';
 
 import { useState } from 'react';
-import { resetApplicantPin } from '@/lib/ea-actions';
+import { setApplicantPin } from '@/lib/ea-actions';
 
 export default function AdminClient({ applicants }) {
   const [states, setStates] = useState(() => {
     const s = {};
-    applicants.forEach((a) => { s[a.id] = { loading: false, msg: '' }; });
+    applicants.forEach((a) => { s[a.id] = { loading: false, msg: '', pinInput: false, pin: '' }; });
     return s;
   });
 
-  function setMsg(id, msg) {
-    setStates((s) => ({ ...s, [id]: { ...s[id], msg, loading: false } }));
+  function update(id, patch) {
+    setStates((s) => ({ ...s, [id]: { ...s[id], ...patch } }));
   }
 
-  function setLoading(id, loading) {
-    setStates((s) => ({ ...s, [id]: { ...s[id], loading, msg: '' } }));
-  }
-
-  async function handleResetPin(applicant) {
-    setLoading(applicant.id, true);
-    const result = await resetApplicantPin(applicant.email);
-    setMsg(applicant.id, result.error ? `Error: ${result.error}` : 'PIN reset email sent ✓');
+  async function handleSetPin(applicant) {
+    const { pin } = states[applicant.id];
+    if (!/^\d{6}$/.test(pin)) {
+      update(applicant.id, { msg: 'Error: PIN must be exactly 6 digits.' });
+      return;
+    }
+    update(applicant.id, { loading: true, msg: '' });
+    const result = await setApplicantPin(applicant.authUserId, pin);
+    update(applicant.id, {
+      loading: false,
+      msg: result.error ? `Error: ${result.error}` : 'PIN updated ✓',
+      pinInput: false,
+      pin: '',
+    });
   }
 
   if (applicants.length === 0) {
@@ -50,33 +56,61 @@ export default function AdminClient({ applicants }) {
           </thead>
           <tbody>
             {applicants.map((a) => {
-              const { loading, msg } = states[a.id] || {};
-              const formStatus = a.formStatus;
+              const { loading, msg, pinInput, pin } = states[a.id] || {};
               return (
                 <tr key={a.id}>
                   <td style={{ fontWeight: 500 }}>{a.name}</td>
                   <td style={{ color: 'var(--muted)', fontSize: '0.85rem' }}>{a.position}</td>
                   <td style={{ color: 'var(--muted)', fontSize: '0.85rem' }}>{a.email}</td>
                   <td>
-                    {formStatus === 'submitted' ? (
+                    {a.formStatus === 'submitted' ? (
                       <span className="pill ok">Submitted</span>
-                    ) : formStatus === 'draft' ? (
+                    ) : a.formStatus === 'draft' ? (
                       <span className="pill na">In Progress</span>
                     ) : (
                       <span className="pill na">Not Started</span>
                     )}
                   </td>
                   <td>
-                    <div className="row-actions">
+                    {pinInput ? (
+                      <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                        <input
+                          type="password"
+                          inputMode="numeric"
+                          maxLength={6}
+                          placeholder="6-digit PIN"
+                          value={pin}
+                          onChange={(e) => update(a.id, { pin: e.target.value.replace(/\D/g, '').slice(0, 6) })}
+                          style={{ width: 100, letterSpacing: '0.2em', fontSize: '0.9rem' }}
+                          autoFocus
+                        />
+                        <button
+                          className="primary"
+                          disabled={loading}
+                          onClick={() => handleSetPin(a)}
+                          style={{ padding: '4px 10px', fontSize: '0.82rem' }}
+                        >
+                          {loading ? '…' : 'Save'}
+                        </button>
+                        <button
+                          className="ghost"
+                          disabled={loading}
+                          onClick={() => update(a.id, { pinInput: false, pin: '', msg: '' })}
+                          style={{ padding: '4px 10px', fontSize: '0.82rem' }}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    ) : (
                       <button
                         className="ghost"
-                        disabled={loading}
-                        onClick={() => handleResetPin(a)}
-                        title="Send PIN reset email to applicant"
+                        disabled={loading || !a.authUserId}
+                        onClick={() => update(a.id, { pinInput: true, msg: '' })}
+                        title={a.authUserId ? 'Set a new PIN for this applicant' : 'Applicant has not registered yet'}
                       >
-                        {loading ? '…' : 'Reset PIN'}
+                        Set PIN
                       </button>
-                    </div>
+                    )}
                     {msg && (
                       <div
                         style={{ fontSize: '0.78rem', marginTop: 4 }}
