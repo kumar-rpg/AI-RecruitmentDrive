@@ -186,6 +186,12 @@ export default function PersonalForm({ initialData }) {
         <h2 style={{ margin: '0 0 18px', fontSize: '1.1rem' }}>Personal Information</h2>
         <p className="hint" style={{ marginTop: -10, marginBottom: 16 }}>All fields are required.</p>
 
+        <div style={{ marginBottom: 18 }}>
+          <label>Position Applied For</label>
+          <input type="text" value={form.position_applied || '—'} disabled readOnly
+            style={{ background: 'var(--surface-2, #f5f5f5)', cursor: 'default', fontWeight: 600 }} />
+        </div>
+
         <div className="ea-grid-2">
           <div>
             <label>Full Name <span className="ea-req">*</span></label>
