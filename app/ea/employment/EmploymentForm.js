@@ -16,11 +16,9 @@ function JobFields({ job, onChange, disabled }) {
   const f = (field) => (e) => onChange(field, e.target.value);
   return (
     <div>
-      <div className="ea-grid-2">
-        <div><label>Company Name</label>
-          <input type="text" value={job.company} disabled={disabled} onChange={f('company')} /></div>
-        <div><label>Tel</label>
-          <input type="text" value={job.tel} disabled={disabled} onChange={f('tel')} /></div>
+      <div>
+        <label>Company Name</label>
+        <input type="text" value={job.company} disabled={disabled} onChange={f('company')} />
       </div>
       <div className="ea-grid-3">
         <div><label>Nature of Business</label>
