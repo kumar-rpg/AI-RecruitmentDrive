@@ -43,6 +43,17 @@ export default function GeneralForm({ initialData }) {
     setForm((f) => ({ ...f, [field]: value }));
   }
 
+  function setNoticePeriod(months) {
+    const update = { notice_period_months: months };
+    const m = parseInt(months, 10);
+    if (!isNaN(m) && m >= 0) {
+      const d = new Date();
+      d.setMonth(d.getMonth() + m);
+      update.expected_join_date = d.toISOString().slice(0, 10);
+    }
+    setForm((f) => ({ ...f, ...update }));
+  }
+
   function toggleSource(val) {
     set('vacancy_source',
       form.vacancy_source.includes(val)
@@ -102,12 +113,13 @@ export default function GeneralForm({ initialData }) {
           <div>
             <label>Notice Period (months)</label>
             <input type="number" value={form.notice_period_months} disabled={isSubmitted} min={0}
-              onChange={(e) => set('notice_period_months', e.target.value)} />
+              onChange={(e) => setNoticePeriod(e.target.value)} />
           </div>
           <div>
             <label>Expected Join Date</label>
             <input type="date" value={form.expected_join_date} disabled={isSubmitted}
               onChange={(e) => set('expected_join_date', e.target.value)} />
+            <div className="hint" style={{ fontSize: '0.75rem', marginTop: 2 }}>Auto-calculated from notice period. You may adjust.</div>
           </div>
         </div>
 
