@@ -184,7 +184,7 @@ export default function EducationForm({ initialData }) {
       {/* Languages & Dialects */}
       <div className="card">
         <h2 style={{ margin: '0 0 6px', fontSize: '1.1rem' }}>Languages & Dialects</h2>
-        <p className=”hint” style={{ marginBottom: 16 }}>Rate proficiency 0 (none) to 10 (native).</p>
+        <p className="hint" style={{ marginBottom: 16 }}>Rate proficiency 0 (none) to 10 (native).</p>
         <div style={{ overflowX: 'auto' }}>
           <table>
             <thead>

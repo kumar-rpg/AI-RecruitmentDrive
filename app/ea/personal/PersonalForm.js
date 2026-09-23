@@ -347,7 +347,7 @@ export default function PersonalForm({ initialData }) {
           <label>Passport-size Photo</label>
           {form.photo_path && (
             <div className="hint" style={{ marginBottom: 6 }}>
-              âœ“ Photo uploaded: {form.photo_path.split('/').pop()}
+              ✓ Photo uploaded: {form.photo_path.split('/').pop()}
             </div>
           )}
           {!isSubmitted && (
