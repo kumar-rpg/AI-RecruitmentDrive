@@ -26,13 +26,17 @@ export async function GET(request, { params }) {
     return new Response('Application not found', { status: 404 });
   }
 
-  // Resolve photo to a short-lived signed URL so the PDF renderer can embed it
+  // Download photo and encode as base64 data URI so react-pdf can embed it
+  // without making a separate network request at render time.
   let pdfData = data;
   if (data.photo_path) {
-    const { data: signed } = await supabaseAdmin()
+    const { data: blob, error: photoErr } = await supabaseAdmin()
       .storage.from('applications')
-      .createSignedUrl(data.photo_path, 120);
-    if (signed?.signedUrl) pdfData = { ...data, photo_url: signed.signedUrl };
+      .download(data.photo_path);
+    if (blob && !photoErr) {
+      const buf = Buffer.from(await blob.arrayBuffer());
+      pdfData = { ...data, photo_url: `data:image/jpeg;base64,${buf.toString('base64')}` };
+    }
   }
 
   // Render PDF
