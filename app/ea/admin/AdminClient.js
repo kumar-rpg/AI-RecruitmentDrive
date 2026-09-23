@@ -72,6 +72,19 @@ export default function AdminClient({ applicants }) {
                     )}
                   </td>
                   <td>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                    {a.formStatus === 'submitted' && a.authUserId && (
+                      <a
+                        href={`/api/ea/pdf/${a.authUserId}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="ghost"
+                        style={{ display: 'inline-block', padding: '4px 10px', fontSize: '0.82rem', textDecoration: 'none', textAlign: 'center' }}
+                        title="Download completed application as PDF"
+                      >
+                        Print PDF
+                      </a>
+                    )}
                     {pinInput ? (
                       <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
                         <input
@@ -119,6 +132,7 @@ export default function AdminClient({ applicants }) {
                         {msg}
                       </div>
                     )}
+                    </div>
                   </td>
                 </tr>
               );
