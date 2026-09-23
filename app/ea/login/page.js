@@ -183,9 +183,13 @@ function LoginForm() {
             style={{ padding: '24px' }}
             onSubmit={mode === 'returning' ? handleReturning : handleNew}
           >
-            {mode === 'new' && (
+            {mode === 'returning' ? (
               <p style={{ color: 'var(--muted)', fontSize: '0.85rem', marginTop: 0 }}>
-                Your email must be on the Interview shortlist. Create a 6-digit PIN to secure your application.
+                Already registered? Enter the email address and 6-digit PIN you set up when you first accessed your application.
+              </p>
+            ) : (
+              <p style={{ color: 'var(--muted)', fontSize: '0.85rem', marginTop: 0 }}>
+                First time here? Your email must be on the Interview shortlist. You&apos;ll create a 6-digit PIN to secure your application — you&apos;ll use this PIN every time you log in.
               </p>
             )}
 
