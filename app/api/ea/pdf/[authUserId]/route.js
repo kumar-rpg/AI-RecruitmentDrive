@@ -35,7 +35,8 @@ export async function GET(request, { params }) {
       .download(data.photo_path);
     if (blob && !photoErr) {
       const buf = Buffer.from(await blob.arrayBuffer());
-      pdfData = { ...data, photo_url: `data:image/jpeg;base64,${buf.toString('base64')}` };
+      const mime = blob.type || 'image/jpeg';
+      pdfData = { ...data, photo_url: `data:${mime};base64,${buf.toString('base64')}` };
     }
   }
 
