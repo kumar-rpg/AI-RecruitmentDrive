@@ -1,12 +1,17 @@
 'use client';
 
 import { useState } from 'react';
-import { setApplicantPin } from '@/lib/ea-actions';
+import { useRouter } from 'next/navigation';
+import { setApplicantPin, deleteApplicantApplication } from '@/lib/ea-actions';
 
 export default function AdminClient({ applicants }) {
+  const router = useRouter();
+
   const [states, setStates] = useState(() => {
     const s = {};
-    applicants.forEach((a) => { s[a.id] = { loading: false, msg: '', pinInput: false, pin: '' }; });
+    applicants.forEach((a) => {
+      s[a.id] = { loading: false, msg: '', pinInput: false, pin: '', confirmDelete: false };
+    });
     return s;
   });
 
@@ -28,6 +33,16 @@ export default function AdminClient({ applicants }) {
       pinInput: false,
       pin: '',
     });
+  }
+
+  async function handleDelete(applicant) {
+    update(applicant.id, { loading: true, msg: '' });
+    const result = await deleteApplicantApplication(applicant.authUserId);
+    if (result.error) {
+      update(applicant.id, { loading: false, msg: `Error: ${result.error}`, confirmDelete: false });
+    } else {
+      router.refresh();
+    }
   }
 
   if (applicants.length === 0) {
@@ -56,7 +71,7 @@ export default function AdminClient({ applicants }) {
           </thead>
           <tbody>
             {applicants.map((a) => {
-              const { loading, msg, pinInput, pin } = states[a.id] || {};
+              const { loading, msg, pinInput, pin, confirmDelete } = states[a.id] || {};
               return (
                 <tr key={a.id}>
                   <td style={{ fontWeight: 500 }}>{a.name}</td>
@@ -131,6 +146,42 @@ export default function AdminClient({ applicants }) {
                       >
                         {msg}
                       </div>
+                    )}
+                    {a.authUserId && (
+                      confirmDelete ? (
+                        <div style={{ marginTop: 4 }}>
+                          <div style={{ fontSize: '0.8rem', color: 'var(--danger)', marginBottom: 4 }}>
+                            Delete all data for {a.name}?
+                          </div>
+                          <div style={{ display: 'flex', gap: 6 }}>
+                            <button
+                              className="primary"
+                              style={{ fontSize: '0.8rem', background: 'var(--danger)', borderColor: 'var(--danger)', padding: '4px 10px' }}
+                              disabled={loading}
+                              onClick={() => handleDelete(a)}
+                            >
+                              {loading ? 'Deleting…' : 'Confirm'}
+                            </button>
+                            <button
+                              className="ghost"
+                              style={{ fontSize: '0.8rem', padding: '4px 10px' }}
+                              disabled={loading}
+                              onClick={() => update(a.id, { confirmDelete: false, msg: '' })}
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <button
+                          className="ghost"
+                          style={{ fontSize: '0.82rem', color: 'var(--danger)', borderColor: 'var(--danger)' }}
+                          disabled={loading}
+                          onClick={() => update(a.id, { confirmDelete: true, msg: '' })}
+                        >
+                          Delete Application
+                        </button>
+                      )
                     )}
                     </div>
                   </td>
