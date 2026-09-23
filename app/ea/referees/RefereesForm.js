@@ -8,6 +8,50 @@ import { saveDraft } from '@/lib/ea-actions';
 const EMPTY_REFEREE = { name: '', relationship: '', phone: '', department: '', position: '', company: '' };
 const EMPTY_EMERGENCY = { name: '', relationship: '', phone: '' };
 
+function RefereeFields({ data, onChange, disabled, title }) {
+  const f = (field) => (e) => onChange({ ...data, [field]: e.target.value });
+  return (
+    <div className="ea-repeating-row">
+      <strong style={{ fontSize: '0.9rem', display: 'block', marginBottom: 12 }}>{title}</strong>
+      <div className="ea-grid-2">
+        <div><label>Name</label>
+          <input type="text" value={data.name} disabled={disabled} onChange={f('name')} /></div>
+        <div><label>Relationship to You</label>
+          <input type="text" value={data.relationship} disabled={disabled} onChange={f('relationship')} /></div>
+      </div>
+      <div className="ea-grid-2">
+        <div><label>Phone</label>
+          <input type="tel" value={data.phone} disabled={disabled} onChange={f('phone')} /></div>
+        <div><label>Company / Organisation</label>
+          <input type="text" value={data.company} disabled={disabled} onChange={f('company')} /></div>
+      </div>
+      <div className="ea-grid-2">
+        <div><label>Department</label>
+          <input type="text" value={data.department} disabled={disabled} onChange={f('department')} /></div>
+        <div><label>Position / Title</label>
+          <input type="text" value={data.position} disabled={disabled} onChange={f('position')} /></div>
+      </div>
+    </div>
+  );
+}
+
+function YesNo({ label, value, onChange, disabled }) {
+  return (
+    <div style={{ marginBottom: 16 }}>
+      <label>{label}</label>
+      <div className="radio-row" style={{ marginTop: 8 }}>
+        {[{ val: true, lbl: 'Yes' }, { val: false, lbl: 'No' }].map(({ val, lbl }) => (
+          <label key={lbl} className={`option ${value === val ? 'picked' : ''}`}>
+            <input type="radio" checked={value === val} disabled={disabled}
+              onChange={() => onChange(val)} />
+            {lbl}
+          </label>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function RefereesForm({ initialData }) {
   const router = useRouter();
   const isSubmitted = initialData?.status === 'submitted';
@@ -33,50 +77,6 @@ export default function RefereesForm({ initialData }) {
 
   const [saving, setSaving] = useState(false);
   const [saveMsg, setSaveMsg] = useState('');
-
-  function RefereeFields({ data, onChange, disabled, title }) {
-    const f = (field) => (e) => onChange({ ...data, [field]: e.target.value });
-    return (
-      <div className="ea-repeating-row">
-        <strong style={{ fontSize: '0.9rem', display: 'block', marginBottom: 12 }}>{title}</strong>
-        <div className="ea-grid-2">
-          <div><label>Name</label>
-            <input type="text" value={data.name} disabled={disabled} onChange={f('name')} /></div>
-          <div><label>Relationship to You</label>
-            <input type="text" value={data.relationship} disabled={disabled} onChange={f('relationship')} /></div>
-        </div>
-        <div className="ea-grid-2">
-          <div><label>Phone</label>
-            <input type="tel" value={data.phone} disabled={disabled} onChange={f('phone')} /></div>
-          <div><label>Company / Organisation</label>
-            <input type="text" value={data.company} disabled={disabled} onChange={f('company')} /></div>
-        </div>
-        <div className="ea-grid-2">
-          <div><label>Department</label>
-            <input type="text" value={data.department} disabled={disabled} onChange={f('department')} /></div>
-          <div><label>Position / Title</label>
-            <input type="text" value={data.position} disabled={disabled} onChange={f('position')} /></div>
-        </div>
-      </div>
-    );
-  }
-
-  function YesNo({ label, value, onChange, disabled }) {
-    return (
-      <div style={{ marginBottom: 16 }}>
-        <label>{label}</label>
-        <div className="radio-row" style={{ marginTop: 8 }}>
-          {[{ val: true, lbl: 'Yes' }, { val: false, lbl: 'No' }].map(({ val, lbl }) => (
-            <label key={lbl} className={`option ${value === val ? 'picked' : ''}`}>
-              <input type="radio" checked={value === val} disabled={disabled}
-                onChange={() => onChange(val)} />
-              {lbl}
-            </label>
-          ))}
-        </div>
-      </div>
-    );
-  }
 
   async function handleSaveDraft() {
     setSaving(true);
