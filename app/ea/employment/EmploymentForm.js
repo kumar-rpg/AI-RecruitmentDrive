@@ -12,6 +12,44 @@ const EMPTY_JOB = {
   benefits: '', reason_for_leaving: '',
 };
 
+function JobFields({ job, onChange, disabled }) {
+  const f = (field) => (e) => onChange(field, e.target.value);
+  return (
+    <div>
+      <div className="ea-grid-2">
+        <div><label>Company Name</label>
+          <input type="text" value={job.company} disabled={disabled} onChange={f('company')} /></div>
+        <div><label>Tel</label>
+          <input type="text" value={job.tel} disabled={disabled} onChange={f('tel')} /></div>
+      </div>
+      <div className="ea-grid-3">
+        <div><label>Nature of Business</label>
+          <input type="text" value={job.business_type} disabled={disabled} onChange={f('business_type')} /></div>
+        <div><label>Position Held</label>
+          <input type="text" value={job.position} disabled={disabled} onChange={f('position')} /></div>
+        <div><label>Department</label>
+          <input type="text" value={job.department} disabled={disabled} onChange={f('department')} /></div>
+      </div>
+      <div className="ea-grid-2">
+        <div><label>From</label>
+          <input type="date" value={job.from_date} disabled={disabled} onChange={f('from_date')} /></div>
+        <div><label>To</label>
+          <input type="date" value={job.to_date} disabled={disabled} onChange={f('to_date')} /></div>
+      </div>
+      <div className="ea-grid-2">
+        <div><label>Starting Salary (RM)</label>
+          <input type="number" value={job.salary_start} disabled={disabled} onChange={f('salary_start')} /></div>
+        <div><label>Last / Current Salary (RM)</label>
+          <input type="number" value={job.salary_current} disabled={disabled} onChange={f('salary_current')} /></div>
+      </div>
+      <div><label>Benefits / Allowances</label>
+        <input type="text" value={job.benefits} disabled={disabled} onChange={f('benefits')} /></div>
+      <div><label>Reason for Leaving</label>
+        <input type="text" value={job.reason_for_leaving} disabled={disabled} onChange={f('reason_for_leaving')} /></div>
+    </div>
+  );
+}
+
 export default function EmploymentForm({ initialData }) {
   const router = useRouter();
   const isSubmitted = initialData?.status === 'submitted';
@@ -65,44 +103,6 @@ export default function EmploymentForm({ initialData }) {
     });
     setSaving(false);
     router.push('/ea/general');
-  }
-
-  function JobFields({ job, onChange, disabled }) {
-    const f = (field) => (e) => onChange(field, e.target.value);
-    return (
-      <div>
-        <div className="ea-grid-2">
-          <div><label>Company Name</label>
-            <input type="text" value={job.company} disabled={disabled} onChange={f('company')} /></div>
-          <div><label>Tel</label>
-            <input type="text" value={job.tel} disabled={disabled} onChange={f('tel')} /></div>
-        </div>
-        <div className="ea-grid-3">
-          <div><label>Nature of Business</label>
-            <input type="text" value={job.business_type} disabled={disabled} onChange={f('business_type')} /></div>
-          <div><label>Position Held</label>
-            <input type="text" value={job.position} disabled={disabled} onChange={f('position')} /></div>
-          <div><label>Department</label>
-            <input type="text" value={job.department} disabled={disabled} onChange={f('department')} /></div>
-        </div>
-        <div className="ea-grid-2">
-          <div><label>From</label>
-            <input type="date" value={job.from_date} disabled={disabled} onChange={f('from_date')} /></div>
-          <div><label>To</label>
-            <input type="date" value={job.to_date} disabled={disabled} onChange={f('to_date')} /></div>
-        </div>
-        <div className="ea-grid-2">
-          <div><label>Starting Salary (RM)</label>
-            <input type="number" value={job.salary_start} disabled={disabled} onChange={f('salary_start')} /></div>
-          <div><label>Last / Current Salary (RM)</label>
-            <input type="number" value={job.salary_current} disabled={disabled} onChange={f('salary_current')} /></div>
-        </div>
-        <div><label>Benefits / Allowances</label>
-          <input type="text" value={job.benefits} disabled={disabled} onChange={f('benefits')} /></div>
-        <div><label>Reason for Leaving</label>
-          <input type="text" value={job.reason_for_leaving} disabled={disabled} onChange={f('reason_for_leaving')} /></div>
-      </div>
-    );
   }
 
   return (
