@@ -21,9 +21,9 @@ export default function GeneralForm({ initialData }) {
   const isSubmitted = initialData?.status === 'submitted';
 
   const [form, setForm] = useState({
-    expected_salary: initialData?.expected_salary || '',
-    notice_period_months: initialData?.notice_period_months || '',
-    expected_join_date: initialData?.expected_join_date || '',
+    expected_salary: initialData?.expected_salary ?? '',
+    notice_period_months: initialData?.notice_period_months ?? '',
+    expected_join_date: initialData?.expected_join_date ?? '',
     vacancy_source: initialData?.vacancy_source || [],
     vacancy_source_employee_name: initialData?.vacancy_source_employee_name || '',
     vacancy_source_agency: initialData?.vacancy_source_agency || '',
@@ -80,10 +80,20 @@ export default function GeneralForm({ initialData }) {
     );
   }
 
+  function cleanForm() {
+    return {
+      ...form,
+      expected_join_date:   form.expected_join_date   || null,
+      pregnancy_due_date:   form.pregnancy_due_date   || null,
+      expected_salary:      form.expected_salary !== '' ? form.expected_salary : null,
+      notice_period_months: form.notice_period_months !== '' ? form.notice_period_months : null,
+    };
+  }
+
   async function handleSaveDraft() {
     setSaving(true);
     setSaveMsg('');
-    const result = await saveDraft(form);
+    const result = await saveDraft(cleanForm());
     setSaving(false);
     setSaveMsg(result.error ? `Error: ${result.error}` : 'Draft saved.');
     setTimeout(() => setSaveMsg(''), 3000);
@@ -97,7 +107,7 @@ export default function GeneralForm({ initialData }) {
       return;
     }
     setSaving(true);
-    await saveDraft(form);
+    await saveDraft(cleanForm());
     setSaving(false);
     router.push('/ea/referees');
   }
