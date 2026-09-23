@@ -188,8 +188,9 @@ export default function PersonalForm({ initialData }) {
 
         <div style={{ marginBottom: 18 }}>
           <label>Position Applied For</label>
-          <input type="text" value={form.position_applied || '—'} disabled readOnly
-            style={{ background: 'var(--surface-2, #f5f5f5)', cursor: 'default', fontWeight: 600 }} />
+          <input type="text" value={form.position_applied || '—'} readOnly
+            style={{ background: 'var(--surface-2, #f5f5f5)', cursor: 'default', fontWeight: 600,
+              color: 'var(--fg, #111)', opacity: 1 }} />
         </div>
 
         <div className="ea-grid-2">
