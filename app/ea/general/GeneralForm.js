@@ -36,11 +36,13 @@ export default function GeneralForm({ initialData }) {
     cortex_connections: initialData?.cortex_connections || [],
   });
 
+  const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
   const [saveMsg, setSaveMsg] = useState('');
 
   function set(field, value) {
     setForm((f) => ({ ...f, [field]: value }));
+    if (errors[field]) setErrors((e) => ({ ...e, [field]: '' }));
   }
 
   function setNoticePeriod(months) {
@@ -52,6 +54,16 @@ export default function GeneralForm({ initialData }) {
       update.expected_join_date = d.toISOString().slice(0, 10);
     }
     setForm((f) => ({ ...f, ...update }));
+    if (errors.notice_period_months) setErrors((e) => ({ ...e, notice_period_months: '' }));
+  }
+
+  function validate() {
+    const errs = {};
+    if (!form.expected_salary && form.expected_salary !== 0) errs.expected_salary = 'This field is required';
+    if (form.notice_period_months === '' || form.notice_period_months === null || form.notice_period_months === undefined) {
+      errs.notice_period_months = 'This field is required';
+    }
+    return errs;
   }
 
   function toggleSource(val) {
@@ -78,6 +90,12 @@ export default function GeneralForm({ initialData }) {
   }
 
   async function handleNext() {
+    const errs = validate();
+    if (Object.keys(errs).length > 0) {
+      setErrors(errs);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
     setSaving(true);
     await saveDraft(form);
     setSaving(false);
@@ -106,14 +124,16 @@ export default function GeneralForm({ initialData }) {
 
         <div className="ea-grid-3">
           <div>
-            <label>Expected Monthly Salary (RM)</label>
+            <label>Expected Monthly Salary (RM) <span className="ea-req">*</span></label>
             <input type="number" value={form.expected_salary} disabled={isSubmitted}
               onChange={(e) => set('expected_salary', e.target.value)} />
+            {errors.expected_salary && <div className="err">{errors.expected_salary}</div>}
           </div>
           <div>
-            <label>Notice Period (months)</label>
+            <label>Notice Period (months) <span className="ea-req">*</span></label>
             <input type="number" value={form.notice_period_months} disabled={isSubmitted} min={0}
               onChange={(e) => setNoticePeriod(e.target.value)} />
+            {errors.notice_period_months && <div className="err">{errors.notice_period_months}</div>}
           </div>
           <div>
             <label>Expected Join Date</label>
