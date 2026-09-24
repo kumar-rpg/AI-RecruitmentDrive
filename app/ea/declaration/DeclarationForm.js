@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import FormProgress from '@/components/ea/FormProgress';
-import { saveDraft, submitApplication } from '@/lib/ea-actions';
+import { saveDraft, submitApplication, signOutApplicant } from '@/lib/ea-actions';
 
 const DECLARATION_TEXT = `I hereby declare that the information given above is true and correct to the best of my knowledge and I have not wilfully suppressed any material fact. I understand that any false statements or concealment of any fact may result in the termination of my employment.
 
@@ -63,6 +63,9 @@ export default function DeclarationForm({ initialData }) {
           <h1>Employment Application</h1>
           <div className="sub">CORTEX ROBOTICS</div>
         </div>
+        <button className="ghost" onClick={() => signOutApplicant()} style={{ whiteSpace: 'nowrap' }}>
+          Sign Out
+        </button>
       </header>
 
       <FormProgress step={6} submitted={isSubmitted} />

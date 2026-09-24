@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import FormProgress from '@/components/ea/FormProgress';
-import { saveDraft } from '@/lib/ea-actions';
+import { saveDraft, signOutApplicant } from '@/lib/ea-actions';
 
 const EMPTY_FAMILY = { name: '', relationship: '', age: '', employer: '' };
 const EMPTY_JOB = {
@@ -110,6 +110,9 @@ export default function EmploymentForm({ initialData }) {
           <h1>Employment Application</h1>
           <div className="sub">CORTEX ROBOTICS</div>
         </div>
+        <button className="ghost" onClick={() => signOutApplicant()} style={{ whiteSpace: 'nowrap' }}>
+          Sign Out
+        </button>
       </header>
 
       <FormProgress step={3} submitted={isSubmitted} />
