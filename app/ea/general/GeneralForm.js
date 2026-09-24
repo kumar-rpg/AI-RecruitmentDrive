@@ -20,6 +20,7 @@ export default function GeneralForm({ initialData }) {
   const router = useRouter();
   const isSubmitted = initialData?.status === 'submitted';
   const isInternship = /\bintern(ship)?\b/i.test(initialData?.position_applied || '');
+  const isFemale = initialData?.gender === 'Female';
 
   const [form, setForm] = useState({
     expected_salary: initialData?.expected_salary ?? '',
@@ -86,7 +87,8 @@ export default function GeneralForm({ initialData }) {
     return {
       ...form,
       expected_join_date:   form.expected_join_date   || null,
-      pregnancy_due_date:   form.pregnancy_due_date   || null,
+      is_pregnant:          isFemale ? form.is_pregnant : null,
+      pregnancy_due_date:   isFemale ? form.pregnancy_due_date || null : null,
       expected_salary:      form.expected_salary !== '' ? form.expected_salary : null,
       notice_period_months: form.notice_period_months !== '' ? form.notice_period_months : null,
     };
@@ -228,10 +230,10 @@ export default function GeneralForm({ initialData }) {
           )}
         </div>
 
-        <div style={{ marginTop: 20 }}>
-          <label>Are you currently pregnant? <span style={{ color: 'var(--muted)', fontSize: '0.8rem' }}>(Female applicants)</span></label>
+        {isFemale && <div style={{ marginTop: 20 }}>
+          <label>Are you currently pregnant?</label>
           <div className="radio-row" style={{ marginTop: 8 }}>
-            {[{ val: true, lbl: 'Yes' }, { val: false, lbl: 'No' }, { val: null, lbl: 'N/A' }].map(({ val, lbl }) => (
+            {[{ val: true, lbl: 'Yes' }, { val: false, lbl: 'No' }].map(({ val, lbl }) => (
               <label key={lbl} className={`option ${form.is_pregnant === val ? 'picked' : ''}`}>
                 <input type="radio" checked={form.is_pregnant === val} disabled={isSubmitted}
                   onChange={() => set('is_pregnant', val)} />
@@ -246,7 +248,7 @@ export default function GeneralForm({ initialData }) {
                 onChange={(e) => set('pregnancy_due_date', e.target.value)} />
             </div>
           )}
-        </div>
+        </div>}
       </div>
 
       {/* Cortex Connections */}
