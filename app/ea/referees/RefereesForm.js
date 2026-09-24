@@ -111,8 +111,12 @@ export default function RefereesForm({ initialData }) {
           <h1>Employment Application</h1>
           <div className="sub">CORTEX ROBOTICS</div>
         </div>
-        <button className="ghost" onClick={() => signOutApplicant()} style={{ whiteSpace: 'nowrap' }}>
-          Sign Out
+        <button className="ghost" disabled={saving} style={{ whiteSpace: 'nowrap' }}
+          onClick={async () => {
+            if (!isSubmitted) { setSaving(true); await saveDraft({ referee_1: ref1, referee_2: ref2, contact_present_employer: contactPresent, contact_previous_employer: contactPrevious, emergency_contact: emergency }); }
+            await signOutApplicant();
+          }}>
+          {saving ? 'Saving…' : 'Sign Out'}
         </button>
       </header>
 

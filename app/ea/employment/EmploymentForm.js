@@ -110,8 +110,12 @@ export default function EmploymentForm({ initialData }) {
           <h1>Employment Application</h1>
           <div className="sub">CORTEX ROBOTICS</div>
         </div>
-        <button className="ghost" onClick={() => signOutApplicant()} style={{ whiteSpace: 'nowrap' }}>
-          Sign Out
+        <button className="ghost" disabled={saving} style={{ whiteSpace: 'nowrap' }}
+          onClick={async () => {
+            if (!isSubmitted) { setSaving(true); await saveDraft({ family_members: family, current_employment: current, previous_employment: previous }); }
+            await signOutApplicant();
+          }}>
+          {saving ? 'Saving…' : 'Sign Out'}
         </button>
       </header>
 

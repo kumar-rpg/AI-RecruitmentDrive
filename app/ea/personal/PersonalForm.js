@@ -172,8 +172,12 @@ export default function PersonalForm({ initialData }) {
             {form.position_applied && ` — ${form.position_applied}`}
           </div>
         </div>
-        <button className="ghost" onClick={() => signOutApplicant()} style={{ whiteSpace: 'nowrap' }}>
-          Sign Out
+        <button className="ghost" disabled={saving} style={{ whiteSpace: 'nowrap' }}
+          onClick={async () => {
+            if (!isSubmitted) { setSaving(true); await saveDraft(form); }
+            await signOutApplicant();
+          }}>
+          {saving ? 'Saving…' : 'Sign Out'}
         </button>
       </header>
 
