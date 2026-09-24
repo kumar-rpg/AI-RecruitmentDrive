@@ -94,7 +94,8 @@ export default function AdminClient({ applicants }) {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="ghost"
-                        style={{ display: 'inline-block', padding: '4px 10px', fontSize: '0.82rem', textDecoration: 'none', textAlign: 'center' }}
+                        style={{ display: 'inline-block', padding: '8px 14px', fontSize: '0.82rem', textDecoration: 'none', textAlign: 'center',
+                          color: 'var(--accent)', border: '1px solid var(--accent)', borderRadius: 8 }}
                         title="Download completed application as PDF"
                       >
                         Print PDF
@@ -132,6 +133,7 @@ export default function AdminClient({ applicants }) {
                     ) : (
                       <button
                         className="ghost"
+                        style={{ borderColor: 'var(--text)' }}
                         disabled={loading || !a.authUserId}
                         onClick={() => update(a.id, { pinInput: true, msg: '' })}
                         title={a.authUserId ? 'Set a new PIN for this applicant' : 'Applicant has not registered yet'}
