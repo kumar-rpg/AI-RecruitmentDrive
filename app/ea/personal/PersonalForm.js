@@ -72,6 +72,9 @@ export default function PersonalForm({ initialData }) {
     position_applied: initialData?.position_applied || '',
   });
 
+  const [nationalityChoice, setNationalityChoice] = useState(
+    !initialData?.nationality ? '' : initialData.nationality === 'Malaysian' ? 'Malaysian' : 'Other'
+  );
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
   const [saveMsg, setSaveMsg] = useState('');
@@ -236,8 +239,21 @@ export default function PersonalForm({ initialData }) {
         <div className="ea-grid-2">
           <div>
             <label>Nationality <span className="ea-req">*</span></label>
-            <input type="text" value={form.nationality} disabled={isSubmitted}
-              onChange={(e) => set('nationality', e.target.value)} />
+            <select value={nationalityChoice} disabled={isSubmitted}
+              onChange={(e) => {
+                const choice = e.target.value;
+                setNationalityChoice(choice);
+                set('nationality', choice === 'Malaysian' ? 'Malaysian' : '');
+              }}>
+              <option value="">Select…</option>
+              <option value="Malaysian">Malaysian</option>
+              <option value="Other">Other</option>
+            </select>
+            {nationalityChoice === 'Other' && (
+              <input type="text" value={form.nationality} disabled={isSubmitted}
+                onChange={(e) => set('nationality', e.target.value)}
+                placeholder="Enter nationality" style={{ marginTop: 8 }} />
+            )}
             {errors.nationality && <div className="err">{errors.nationality}</div>}
           </div>
           <div>
