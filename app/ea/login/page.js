@@ -67,7 +67,6 @@ function LoginForm() {
     const { data: { user: signedInUser } } = await supabase.auth.getUser();
     const dest = signedInUser?.app_metadata?.role === 'admin' ? '/ea/admin' : '/ea/personal';
     router.push(dest);
-    router.refresh();
   }
 
   async function handleNew(e) {
@@ -94,7 +93,6 @@ function LoginForm() {
       return;
     }
     router.push('/ea/personal');
-    router.refresh();
   }
 
   async function handleForgotPin(e) {
