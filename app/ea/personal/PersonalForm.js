@@ -42,6 +42,11 @@ const REQUIRED_FIELDS = [
   'date_of_birth','phone_mobile','email','residential_address','country','marital_status',
 ];
 
+const READONLY_STYLE = {
+  background: 'var(--surface-2, #f5f5f5)', cursor: 'default', fontWeight: 600,
+  color: 'var(--fg, #111)', opacity: 1,
+};
+
 function empty(val) {
   return val === null || val === undefined || val === '';
 }
@@ -195,16 +200,13 @@ export default function PersonalForm({ initialData }) {
 
         <div style={{ marginBottom: 18 }}>
           <label>Position Applied For</label>
-          <input type="text" value={form.position_applied || '—'} readOnly
-            style={{ background: 'var(--surface-2, #f5f5f5)', cursor: 'default', fontWeight: 600,
-              color: 'var(--fg, #111)', opacity: 1 }} />
+          <input type="text" value={form.position_applied || '—'} readOnly style={READONLY_STYLE} />
         </div>
 
         <div className="ea-grid-2">
           <div>
             <label>Full Name <span className="ea-req">*</span></label>
-            <input type="text" value={form.full_name} disabled={isSubmitted}
-              onChange={(e) => set('full_name', e.target.value)} placeholder="As per IC / Passport" />
+            <input type="text" value={form.full_name} readOnly style={READONLY_STYLE} />
             {errors.full_name && <div className="err">{errors.full_name}</div>}
           </div>
           <div>
@@ -296,8 +298,7 @@ export default function PersonalForm({ initialData }) {
 
         <div>
           <label>Email Address <span className="ea-req">*</span></label>
-          <input type="email" value={form.email} disabled={isSubmitted}
-            onChange={(e) => set('email', e.target.value)} />
+          <input type="email" value={form.email} readOnly style={READONLY_STYLE} />
           {errors.email && <div className="err">{errors.email}</div>}
         </div>
 
