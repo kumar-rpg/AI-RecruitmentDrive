@@ -19,6 +19,7 @@ const EMPTY_CONNECTION = { name: '', relationship: '', department: '', position:
 export default function GeneralForm({ initialData }) {
   const router = useRouter();
   const isSubmitted = initialData?.status === 'submitted';
+  const isInternship = /\bintern(ship)?\b/i.test(initialData?.position_applied || '');
 
   const [form, setForm] = useState({
     expected_salary: initialData?.expected_salary ?? '',
@@ -59,6 +60,7 @@ export default function GeneralForm({ initialData }) {
 
   function validate() {
     const errs = {};
+    if (isInternship) return errs;
     if (!form.expected_salary && form.expected_salary !== 0) errs.expected_salary = 'This field is required';
     if (form.notice_period_months === '' || form.notice_period_months === null || form.notice_period_months === undefined) {
       errs.notice_period_months = 'This field is required';
@@ -132,7 +134,7 @@ export default function GeneralForm({ initialData }) {
       <div className="card">
         <h2 style={{ margin: '0 0 18px', fontSize: '1.1rem' }}>General Information</h2>
 
-        <div className="ea-grid-3">
+        {!isInternship && <div className="ea-grid-3">
           <div>
             <label>Expected Monthly Salary (RM) <span className="ea-req">*</span></label>
             <input type="number" value={form.expected_salary} disabled={isSubmitted}
@@ -151,7 +153,7 @@ export default function GeneralForm({ initialData }) {
               onChange={(e) => set('expected_join_date', e.target.value)} />
             <div className="hint" style={{ fontSize: '0.75rem', marginTop: 2 }}>Auto-calculated from notice period. You may adjust.</div>
           </div>
-        </div>
+        </div>}
 
         <label>How did you hear about this vacancy?</label>
         <div className="ea-checkbox-group">

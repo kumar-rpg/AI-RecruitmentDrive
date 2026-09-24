@@ -15,7 +15,7 @@ export default async function GeneralPage() {
              vacancy_source, vacancy_source_employee_name, vacancy_source_agency,
              criminal_conviction, criminal_conviction_details,
              health_condition, health_condition_details,
-             is_pregnant, pregnancy_due_date, cortex_connections, status`)
+             is_pregnant, pregnancy_due_date, cortex_connections, position_applied, status`)
     .eq('auth_user_id', user.id)
     .maybeSingle();
 
