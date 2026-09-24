@@ -360,7 +360,7 @@ export default function PersonalForm({ initialData }) {
         </div>
 
         <div>
-          <label>Passport-size Photo</label>
+          <label>Passport Size Photo / Selfie ( Format : JPG, PNG )</label>
           {form.photo_path && (
             <div className="hint" style={{ marginBottom: 6 }}>
               ✓ Photo uploaded: {form.photo_path.split('/').pop()}
@@ -368,7 +368,7 @@ export default function PersonalForm({ initialData }) {
           )}
           {!isSubmitted && (
             <div className="file-row">
-              <input type="file" accept="image/*" onChange={handlePhotoUpload} disabled={uploading} />
+              <input type="file" accept="image/jpeg,image/png" onChange={handlePhotoUpload} disabled={uploading} />
               {uploading && <div className="hint">Uploading…</div>}
             </div>
           )}
