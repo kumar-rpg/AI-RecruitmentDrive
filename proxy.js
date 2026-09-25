@@ -49,6 +49,12 @@ export async function proxy(request) {
     return NextResponse.redirect(new URL('/ea/login', request.url));
   }
 
+  // Admins never fill in the applicant form
+  if (/^\/ea\/(personal|education|employment|general|referees|declaration|success)(\/|$)/.test(pathname)
+      && user?.app_metadata?.role === 'admin') {
+    return NextResponse.redirect(new URL('/ea/admin', request.url));
+  }
+
   return response;
 }
 
