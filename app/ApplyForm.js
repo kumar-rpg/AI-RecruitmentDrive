@@ -14,6 +14,8 @@ import {
   formatPhone,
   monthsBetween,
   formatDuration,
+  isInternPosition,
+  categoryFitsPosition,
 } from '@/lib/validation';
 
 const initialForm = {
@@ -112,6 +114,14 @@ export default function ApplyForm({ positions }) {
     }
     if (!form.category) {
       setError('Please select one: Intern, Graduating / Job-seeking, or Already Working.');
+      return;
+    }
+    if (!categoryFitsPosition(form.category, form.position)) {
+      setError(
+        isInternPosition(form.position)
+          ? 'Intern positions are open to Studying — Intern applicants only.'
+          : 'This position is open to Graduating / Job-seeking or Already Working applicants only.'
+      );
       return;
     }
     if (!isWorking) {
@@ -267,7 +277,16 @@ export default function ApplyForm({ positions }) {
         ) : (
           <select
             value={form.position}
-            onChange={(e) => setForm({ ...form, position: e.target.value })}
+            onChange={(e) => {
+              const position = e.target.value;
+              // A category picked earlier may not fit the new position — clear it
+              // (and the intern-only dates) so the applicant has to re-choose.
+              if (form.category && !categoryFitsPosition(form.category, position)) {
+                setForm({ ...form, position, category: '', internStart: '', internEnd: '' });
+              } else {
+                setForm({ ...form, position });
+              }
+            }}
             required
           >
             <option value="" disabled>
@@ -287,16 +306,23 @@ export default function ApplyForm({ positions }) {
             { val: 'intern', label: 'Studying — Intern' },
             { val: 'grad', label: 'Studying — Graduating / Job-seeking' },
             { val: 'working', label: 'Already Working' },
-          ].map((opt) => (
+          ].map((opt) => {
+            const disabled = !!form.position && !categoryFitsPosition(opt.val, form.position);
+            return (
             <label
               key={opt.val}
-              className={'option' + (form.category === opt.val ? ' picked' : '')}
+              className={
+                'option' +
+                (form.category === opt.val ? ' picked' : '') +
+                (disabled ? ' disabled' : '')
+              }
             >
               <input
                 type="radio"
                 name="category"
                 value={opt.val}
                 checked={form.category === opt.val}
+                disabled={disabled}
                 onChange={() => {
                   setForm({
                     ...form,
@@ -314,7 +340,8 @@ export default function ApplyForm({ positions }) {
               />{' '}
               {opt.label}
             </label>
-          ))}
+            );
+          })}
         </div>
 
         {isIntern && (

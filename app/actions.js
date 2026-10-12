@@ -2,7 +2,12 @@
 
 import { randomUUID } from 'crypto';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
-import { validateApplicant, monthsBetween } from '@/lib/validation';
+import {
+  validateApplicant,
+  monthsBetween,
+  isInternPosition,
+  categoryFitsPosition,
+} from '@/lib/validation';
 
 const BUCKET = 'applications';
 const VALID_CATEGORIES = ['intern', 'grad', 'working'];
@@ -95,6 +100,13 @@ export async function submitApplication(payload) {
     internEnd,
   });
   if (problem) throw new Error(problem);
+  if (!categoryFitsPosition(category, position)) {
+    throw new Error(
+      isInternPosition(position)
+        ? 'Intern positions are open to Studying — Intern applicants only.'
+        : 'This position is open to Graduating / Job-seeking or Already Working applicants only.'
+    );
+  }
 
   if (!resumePath) {
     throw new Error('Resume was not uploaded.');

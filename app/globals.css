@@ -59,6 +59,7 @@ input[type=text], input[type=email], input[type=password], select {
   border-radius: 8px; cursor: pointer; flex: 1; min-width: 150px;
 }
 .radio-row label.option.picked { border-color: var(--accent); color: var(--accent); }
+.radio-row label.option.disabled { opacity: 0.4; cursor: not-allowed; }
 .file-row { border: 1px dashed var(--border); border-radius: 8px; padding: 12px; margin-top: 6px; }
 .file-row input[type=file] { color: var(--muted); font-size: 0.85rem; width: 100%; }
 .hint { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
@@ -438,3 +439,4 @@ table input[type=number] { padding: 6px 8px; }
   border-radius: 8px; cursor: pointer; flex: 1; min-width: 100px;
 }
 .radio-row label.option.picked { border-color: var(--accent); color: var(--accent); }
+.radio-row label.option.disabled { opacity: 0.4; cursor: not-allowed; }
