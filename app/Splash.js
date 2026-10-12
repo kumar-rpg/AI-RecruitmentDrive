@@ -78,6 +78,17 @@ export default function Splash({ onStart, positions = [] }) {
           </ul>
         </div>
 
+        <div className="splash-req">
+          <h2>File Formats</h2>
+          <ol>
+            <li>Only upload PDF files</li>
+            <li>
+              Name the files resume.pdf, transcripts.pdf and salary.pdf based on the
+              position that you are applying for
+            </li>
+          </ol>
+        </div>
+
         <p className="splash-note">
           All documents must be PDF files, and only one file can be uploaded per
           document.
