@@ -83,8 +83,8 @@ export default function Splash({ onStart, positions = [] }) {
           <ol>
             <li>Only upload PDF files</li>
             <li>
-              Name the files resume.pdf, transcripts.pdf and salary.pdf based on the
-              position that you are applying for
+              Name your files resume.pdf, transcripts.pdf (interns and graduates) or
+              salary.pdf (already working)
             </li>
           </ol>
         </div>
