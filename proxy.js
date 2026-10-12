@@ -34,8 +34,8 @@ export async function proxy(request) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Protect /dashboard
-  if (pathname.startsWith('/dashboard') && !user) {
+  // Protect /dashboard — admin role required, since EA applicants have logins too
+  if (pathname.startsWith('/dashboard') && user?.app_metadata?.role !== 'admin') {
     return NextResponse.redirect(new URL('/login', request.url));
   }
 

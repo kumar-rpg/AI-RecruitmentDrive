@@ -18,17 +18,26 @@ export default function LoginPage() {
     setSubmitting(true);
 
     const supabase = supabaseBrowser();
-    const { error: signInError } = await supabase.auth.signInWithPassword({
+    const { data, error: signInError } = await supabase.auth.signInWithPassword({
       email: email.trim(),
       password,
     });
 
-    setSubmitting(false);
-
     if (signInError) {
+      setSubmitting(false);
       setError('Login failed — check your email and password.');
       return;
     }
+
+    // EA applicants have logins too; only admins may use the dashboard.
+    if (data.user?.app_metadata?.role !== 'admin') {
+      await supabase.auth.signOut();
+      setSubmitting(false);
+      setError('This account does not have dashboard access.');
+      return;
+    }
+
+    setSubmitting(false);
 
     router.push('/dashboard');
     router.refresh();

@@ -9,7 +9,7 @@ export default async function DashboardPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) redirect('/login');
+  if (user?.app_metadata?.role !== 'admin') redirect('/login');
 
   const { data: applicants, error } = await supabaseAdmin()
     .from('applicants')

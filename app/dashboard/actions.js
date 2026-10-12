@@ -17,12 +17,15 @@ const VALID_STATUSES = [
 // Defense in depth: middleware.js already blocks unauthenticated visits to
 // /dashboard, but Server Actions are separately callable endpoints, so every
 // action here re-checks that a real admin session is attached to the request.
+// Being signed in is not enough: EA applicants self-register logins too, so the
+// session must carry the admin role.
 async function requireAdmin() {
   const supabase = await supabaseServer();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) throw new Error('Not authenticated.');
+  if (user.app_metadata?.role !== 'admin') throw new Error('Unauthorized.');
   return user;
 }
 
