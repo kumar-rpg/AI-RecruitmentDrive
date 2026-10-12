@@ -90,8 +90,7 @@ export default function Splash({ onStart, positions = [] }) {
         </div>
 
         <p className="splash-note">
-          All documents must be PDF files, and only one file can be uploaded per
-          document.
+          Only one file can be uploaded per document.
         </p>
 
         <button className="primary" type="button" onClick={onStart}>
