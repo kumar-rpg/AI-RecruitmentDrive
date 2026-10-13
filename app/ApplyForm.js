@@ -310,7 +310,7 @@ export default function ApplyForm({ positions }) {
             </div>
             {positionStartDate && (
               <div style={{ flex: '0 0 170px' }}>
-                <label>Internship Start Date</label>
+                <label>Expected Start Date</label>
                 <input type="date" value={positionStartDate} readOnly disabled />
               </div>
             )}
