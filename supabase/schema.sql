@@ -6,6 +6,7 @@ create table if not exists public.positions (
   id uuid primary key default gen_random_uuid(),
   title text not null unique,
   is_active boolean not null default true,
+  internship_start_date date,
   created_at timestamptz not null default now()
 );
 

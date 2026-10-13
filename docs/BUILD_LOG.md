@@ -365,6 +365,20 @@ first, the UPDATE itself (guarded to only rows with both dates and End >
 Start), and a verification SELECT that should return zero rows once
 applied.
 
+## 20. Internship start date per position
+
+HR can now set an **Internship Start** date on each intern position in
+Manage Positions (`positions.internship_start_date`, nullable —
+`supabase/migrations/011_add_position_start_date.sql`). The date input only
+appears on rows whose title contains "Intern"/"Internship"
+(`isInternPosition()` in `lib/validation.js`); other rows show "—". Saved
+immediately on change by the admin-gated `setPositionStartDate` action.
+
+On the public form, picking an intern position that has a date shows it
+read-only beside **Position Applied For**. Positions with no date, and every
+non-intern position, show nothing. It is informational only: the applicant's
+own Start/End Date pickers are unchanged and still drive what is stored.
+
 ---
 
 ## Where things stand

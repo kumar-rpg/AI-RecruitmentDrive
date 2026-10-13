@@ -43,6 +43,10 @@ export default function ApplyForm({ positions }) {
   const isIntern = form.category === 'intern';
   const internDuration = monthsBetween(form.internStart, form.internEnd);
   const openPositions = positions.filter((p) => p.is_active !== false);
+  // HR-set start date for the chosen position — shown read-only, intern roles only.
+  const positionStartDate = isInternPosition(form.position)
+    ? positions.find((p) => p.title === form.position)?.internship_start_date || ''
+    : '';
 
   function isPDF(file) {
     if (!file) return false;
@@ -269,35 +273,48 @@ export default function ApplyForm({ positions }) {
           required
         />
 
-        <label>Position Applied For</label>
         {openPositions.length === 0 ? (
-          <div className="hint">
-            No positions are currently open — check back later, or contact us directly.
-          </div>
+          <>
+            <label>Position Applied For</label>
+            <div className="hint">
+              No positions are currently open — check back later, or contact us directly.
+            </div>
+          </>
         ) : (
-          <select
-            value={form.position}
-            onChange={(e) => {
-              const position = e.target.value;
-              // A category picked earlier may not fit the new position — clear it
-              // (and the intern-only dates) so the applicant has to re-choose.
-              if (form.category && !categoryFitsPosition(form.category, position)) {
-                setForm({ ...form, position, category: '', internStart: '', internEnd: '' });
-              } else {
-                setForm({ ...form, position });
-              }
-            }}
-            required
-          >
-            <option value="" disabled>
-              Select a position…
-            </option>
-            {openPositions.map((p) => (
-              <option key={p.id} value={p.title}>
-                {p.title}
-              </option>
-            ))}
-          </select>
+          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'flex-end' }}>
+            <div style={{ flex: '1 1 220px', minWidth: 0 }}>
+              <label>Position Applied For</label>
+              <select
+                value={form.position}
+                onChange={(e) => {
+                  const position = e.target.value;
+                  // A category picked earlier may not fit the new position — clear it
+                  // (and the intern-only dates) so the applicant has to re-choose.
+                  if (form.category && !categoryFitsPosition(form.category, position)) {
+                    setForm({ ...form, position, category: '', internStart: '', internEnd: '' });
+                  } else {
+                    setForm({ ...form, position });
+                  }
+                }}
+                required
+              >
+                <option value="" disabled>
+                  Select a position…
+                </option>
+                {openPositions.map((p) => (
+                  <option key={p.id} value={p.title}>
+                    {p.title}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {positionStartDate && (
+              <div style={{ flex: '0 0 170px' }}>
+                <label>Internship Start Date</label>
+                <input type="date" value={positionStartDate} readOnly disabled />
+              </div>
+            )}
+          </div>
         )}
 
         <label>Are you currently studying, or already working?</label>

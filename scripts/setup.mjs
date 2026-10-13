@@ -393,7 +393,7 @@ const EXPECTED = {
     'id,name,email,phone,category,org,program_or_role,position,' +
     'internship_start_date,internship_end_date,internship_duration_months,' +
     'resume_path,transcript_path,status,submitted_at',
-  positions: 'id,title,is_active,created_at',
+  positions: 'id,title,is_active,internship_start_date,created_at',
 };
 
 async function checkSchema(admin, allowApply = true) {

@@ -8,7 +8,9 @@ import {
   togglePositionActive,
   deletePosition,
   renamePosition,
+  setPositionStartDate,
 } from '../actions';
+import { isInternPosition } from '@/lib/validation';
 
 export default function PositionsManager({ initialPositions }) {
   const [positions, setPositions] = useState(initialPositions);
@@ -40,6 +42,21 @@ export default function PositionsManager({ initialPositions }) {
       await togglePositionActive(id, isActive);
     } catch (err) {
       alert('Could not update position: ' + err.message);
+    }
+  }
+
+  async function handleStartDate(id, date) {
+    const previous = positions.find((p) => p.id === id)?.internship_start_date ?? null;
+    setPositions((prev) =>
+      prev.map((p) => (p.id === id ? { ...p, internship_start_date: date || null } : p))
+    );
+    try {
+      await setPositionStartDate(id, date);
+    } catch (err) {
+      setPositions((prev) =>
+        prev.map((p) => (p.id === id ? { ...p, internship_start_date: previous } : p))
+      );
+      alert('Could not update start date: ' + err.message);
     }
   }
 
@@ -135,6 +152,7 @@ export default function PositionsManager({ initialPositions }) {
               <tr>
                 <th>Title</th>
                 <th>Open on Form</th>
+                <th>Internship Start</th>
                 <th></th>
               </tr>
             </thead>
@@ -166,6 +184,18 @@ export default function PositionsManager({ initialPositions }) {
                     >
                       {p.is_active ? 'Open' : 'Closed'}
                     </span>
+                  </td>
+                  <td>
+                    {isInternPosition(p.title) ? (
+                      <input
+                        type="date"
+                        value={p.internship_start_date || ''}
+                        onChange={(e) => handleStartDate(p.id, e.target.value)}
+                        style={{ padding: '6px 10px', fontSize: '0.85rem', width: 'auto' }}
+                      />
+                    ) : (
+                      '—'
+                    )}
                   </td>
                   <td>
                     <div className="row-actions">

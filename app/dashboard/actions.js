@@ -146,6 +146,28 @@ export async function togglePositionActive(id, isActive) {
   return { ok: true };
 }
 
+export async function setPositionStartDate(id, date) {
+  await requireAdmin();
+
+  const value = date || null;
+  if (value !== null) {
+    const valid =
+      /^\d{4}-\d{2}-\d{2}$/.test(value) && !Number.isNaN(new Date(value + 'T00:00:00Z').getTime());
+    if (!valid) throw new Error('Start date must be a valid date.');
+  }
+
+  const { error } = await supabaseAdmin()
+    .from('positions')
+    .update({ internship_start_date: value })
+    .eq('id', id);
+  if (error) throw new Error('Could not update start date: ' + error.message);
+
+  revalidatePath('/');
+  revalidatePath('/dashboard');
+  revalidatePath('/dashboard/positions');
+  return { ok: true };
+}
+
 export async function renamePosition(id, newTitle) {
   await requireAdmin();
 
