@@ -281,7 +281,7 @@ export default function ApplyForm({ positions }) {
             </div>
           </>
         ) : (
-          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'flex-end' }}>
+          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'flex-start' }}>
             <div style={{ flex: '1 1 220px', minWidth: 0 }}>
               <label>Position Applied For</label>
               <select
