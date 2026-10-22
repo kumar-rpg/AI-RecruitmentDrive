@@ -418,14 +418,13 @@ export default function ApplyForm({ positions }) {
             <div style={{ flex: '1 1 200px', minWidth: 0 }}>
               <label>Notice Period (months)</label>
               <input
-                type="number"
+                type="text"
                 inputMode="numeric"
-                min="0"
-                max="12"
-                step="1"
                 placeholder="e.g. 1"
                 value={form.noticePeriod}
-                onChange={(e) => setForm({ ...form, noticePeriod: e.target.value })}
+                onChange={(e) =>
+                  setForm({ ...form, noticePeriod: e.target.value.replace(/D/g, '').slice(0, 2) })
+                }
                 required
               />
             </div>

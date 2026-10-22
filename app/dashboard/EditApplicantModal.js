@@ -197,13 +197,12 @@ export default function EditApplicantModal({ applicant, positions, onSaved, onCl
             />
             <label>Notice Period (months)</label>
             <input
-              type="number"
+              type="text"
               inputMode="numeric"
-              min="0"
-              max="12"
-              step="1"
               value={form.noticePeriod}
-              onChange={(e) => setForm({ ...form, noticePeriod: e.target.value })}
+              onChange={(e) =>
+                setForm({ ...form, noticePeriod: e.target.value.replace(/D/g, '').slice(0, 2) })
+              }
             />
           </>
         )}
