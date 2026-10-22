@@ -423,7 +423,7 @@ export default function ApplyForm({ positions }) {
                 placeholder="e.g. 1"
                 value={form.noticePeriod}
                 onChange={(e) =>
-                  setForm({ ...form, noticePeriod: e.target.value.replace(/D/g, '').slice(0, 2) })
+                  setForm({ ...form, noticePeriod: e.target.value.replace(/\D/g, '').slice(0, 2) })
                 }
                 required
               />
