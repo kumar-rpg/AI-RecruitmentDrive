@@ -16,10 +16,16 @@ import {
   formatDuration,
   isInternPosition,
   categoryFitsPosition,
+  validateExtras,
+  sanitizeSalary,
+  todayISO,
 } from '@/lib/validation';
 
 const initialForm = {
   name: '',
+  dateOfBirth: '',
+  expectedSalary: '',
+  noticePeriod: '',
   email: '',
   phone: '',
   category: '',
@@ -128,6 +134,19 @@ export default function ApplyForm({ positions }) {
       );
       return;
     }
+    const extrasProblem = validateExtras(
+      {
+        dateOfBirth: form.dateOfBirth,
+        category: form.category,
+        expectedSalary: form.expectedSalary,
+        noticePeriod: form.noticePeriod,
+      },
+      { required: true }
+    );
+    if (extrasProblem) {
+      setError(extrasProblem);
+      return;
+    }
     if (!isWorking) {
       if (!form.org.trim()) {
         setError('University cannot be blank.');
@@ -210,6 +229,9 @@ export default function ApplyForm({ positions }) {
       await submitApplication({
         id: targets.id,
         name: form.name,
+        dateOfBirth: form.dateOfBirth,
+        expectedSalary: isWorking ? form.expectedSalary : '',
+        noticePeriod: isWorking ? form.noticePeriod : '',
         email: form.email,
         phone: form.phone,
         position: form.position,
@@ -245,14 +267,29 @@ export default function ApplyForm({ positions }) {
       </header>
 
       <form className="card" onSubmit={handleSubmit}>
-        <label>Full Name</label>
-        <input
-          type="text"
-          placeholder="e.g. Jane Tan"
-          value={form.name}
-          onChange={(e) => setForm({ ...form, name: sanitizeName(e.target.value) })}
-          required
-        />
+        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'flex-start' }}>
+          <div style={{ flex: '1 1 220px', minWidth: 0 }}>
+            <label>Full Name</label>
+            <input
+              type="text"
+              placeholder="e.g. Jane Tan"
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: sanitizeName(e.target.value) })}
+              required
+            />
+          </div>
+          <div style={{ flex: '0 0 170px' }}>
+            <label>Date of Birth</label>
+            <input
+              type="date"
+              value={form.dateOfBirth}
+              min="1940-01-01"
+              max={todayISO()}
+              onChange={(e) => setForm({ ...form, dateOfBirth: e.target.value })}
+              required
+            />
+          </div>
+        </div>
 
         <label>Email Address</label>
         <input
@@ -348,6 +385,8 @@ export default function ApplyForm({ positions }) {
                     program: opt.val === 'working' ? '' : form.program,
                     internStart: opt.val === 'intern' ? form.internStart : '',
                     internEnd: opt.val === 'intern' ? form.internEnd : '',
+                    expectedSalary: opt.val === 'working' ? form.expectedSalary : '',
+                    noticePeriod: opt.val === 'working' ? form.noticePeriod : '',
                   });
                   if (opt.val !== 'working') setSalarySlipFile(null);
                   if (opt.val === 'working') setTranscriptFile(null);
@@ -360,6 +399,38 @@ export default function ApplyForm({ positions }) {
             );
           })}
         </div>
+
+        {isWorking && (
+          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'flex-start' }}>
+            <div style={{ flex: '1 1 200px', minWidth: 0 }}>
+              <label>Expected Monthly Salary (RM)</label>
+              <input
+                type="text"
+                inputMode="decimal"
+                placeholder="e.g. 4500"
+                value={form.expectedSalary}
+                onChange={(e) =>
+                  setForm({ ...form, expectedSalary: sanitizeSalary(e.target.value) })
+                }
+                required
+              />
+            </div>
+            <div style={{ flex: '1 1 200px', minWidth: 0 }}>
+              <label>Notice Period (months)</label>
+              <input
+                type="number"
+                inputMode="numeric"
+                min="0"
+                max="12"
+                step="1"
+                placeholder="e.g. 1"
+                value={form.noticePeriod}
+                onChange={(e) => setForm({ ...form, noticePeriod: e.target.value })}
+                required
+              />
+            </div>
+          </div>
+        )}
 
         {isIntern && (
           <>

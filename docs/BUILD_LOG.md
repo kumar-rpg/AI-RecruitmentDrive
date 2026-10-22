@@ -379,6 +379,23 @@ read-only beside **Position Applied For**. Positions with no date, and every
 non-intern position, show nothing. It is informational only: the applicant's
 own Start/End Date pickers are unchanged and still drive what is stored.
 
+## 21. Date of Birth, Expected Salary and Notice Period
+
+The public form now asks every applicant for a **Date of Birth**, beside
+Full Name, and Already Working applicants also for **Expected Monthly Salary
+(RM)** and **Notice Period (months, 0-12)**. All three are required where
+shown and stored on `applicants` (`date_of_birth`, `expected_salary`,
+`notice_period_months` — `supabase/migrations/012_add_dob_salary_notice.sql`);
+salary and notice are cleared if the applicant switches away from Already
+Working.
+
+The rules live in `validateExtras()` in `lib/validation.js`, deliberately apart
+from `validateApplicant()`: the public form and `submitApplication` call it
+with `required: true`, while the HR edit dialog and `updateApplicant` call it
+without, so older records that predate these fields stay editable (blank is
+fine, anything entered must still be valid). HR can see and edit all three in
+the Edit dialog, and they are in the CSV export; they are not table columns.
+
 ---
 
 ## Where things stand

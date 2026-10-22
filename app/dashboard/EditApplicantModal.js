@@ -5,6 +5,9 @@ import {
   sanitizeName,
   formatPhone,
   validateApplicant,
+  validateExtras,
+  sanitizeSalary,
+  todayISO,
   monthsBetween,
   formatDuration,
 } from '@/lib/validation';
@@ -20,6 +23,9 @@ export default function EditApplicantModal({ applicant, positions, onSaved, onCl
   const [form, setForm] = useState({
     name: applicant.name ?? '',
     email: applicant.email ?? '',
+    dateOfBirth: applicant.date_of_birth ?? '',
+    expectedSalary: applicant.expected_salary ?? '',
+    noticePeriod: applicant.notice_period_months ?? '',
     phone: applicant.phone ?? '',
     position: applicant.position ?? '',
     category: applicant.category ?? '',
@@ -57,6 +63,8 @@ export default function EditApplicantModal({ applicant, positions, onSaved, onCl
       program: val === 'working' ? '' : f.program,
       internStart: val === 'intern' ? f.internStart : '',
       internEnd: val === 'intern' ? f.internEnd : '',
+      expectedSalary: val === 'working' ? f.expectedSalary : '',
+      noticePeriod: val === 'working' ? f.noticePeriod : '',
     }));
   }
 
@@ -64,7 +72,9 @@ export default function EditApplicantModal({ applicant, positions, onSaved, onCl
     e.preventDefault();
     setError('');
 
-    const problem = validateApplicant(form);
+    // Blank is allowed here (older records have no DOB/salary), but anything
+    // entered must still be well-formed.
+    const problem = validateApplicant(form) || validateExtras(form);
     if (problem) {
       setError(problem);
       return;
@@ -77,6 +87,9 @@ export default function EditApplicantModal({ applicant, positions, onSaved, onCl
         ...applicant,
         name: form.name.trim(),
         email: form.email.trim(),
+        date_of_birth: form.dateOfBirth || null,
+        expected_salary: isWorking && form.expectedSalary !== '' ? Number(form.expectedSalary) : null,
+        notice_period_months: isWorking && form.noticePeriod !== '' ? Number(form.noticePeriod) : null,
         phone: form.phone.trim(),
         position: form.position.trim(),
         category: form.category,
@@ -124,6 +137,15 @@ export default function EditApplicantModal({ applicant, positions, onSaved, onCl
           onChange={(e) => setForm({ ...form, email: e.target.value })}
         />
 
+        <label>Date of Birth</label>
+        <input
+          type="date"
+          value={form.dateOfBirth}
+          min="1940-01-01"
+          max={todayISO()}
+          onChange={(e) => setForm({ ...form, dateOfBirth: e.target.value })}
+        />
+
         <label>Mobile No.</label>
         <input
           type="text"
@@ -163,6 +185,28 @@ export default function EditApplicantModal({ applicant, positions, onSaved, onCl
             </option>
           ))}
         </select>
+
+        {isWorking && (
+          <>
+            <label>Expected Monthly Salary (RM)</label>
+            <input
+              type="text"
+              inputMode="decimal"
+              value={form.expectedSalary}
+              onChange={(e) => setForm({ ...form, expectedSalary: sanitizeSalary(e.target.value) })}
+            />
+            <label>Notice Period (months)</label>
+            <input
+              type="number"
+              inputMode="numeric"
+              min="0"
+              max="12"
+              step="1"
+              value={form.noticePeriod}
+              onChange={(e) => setForm({ ...form, noticePeriod: e.target.value })}
+            />
+          </>
+        )}
 
         {isIntern && (
           <>

@@ -392,6 +392,7 @@ const EXPECTED = {
   applicants:
     'id,name,email,phone,category,org,program_or_role,position,' +
     'internship_start_date,internship_end_date,internship_duration_months,' +
+    'date_of_birth,expected_salary,notice_period_months,' +
     'resume_path,transcript_path,status,submitted_at',
   positions: 'id,title,is_active,internship_start_date,created_at',
 };

@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { supabaseServer } from '@/lib/supabaseServer';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
-import { validateApplicant, monthsBetween } from '@/lib/validation';
+import { validateApplicant, validateExtras, monthsBetween } from '@/lib/validation';
 
 const BUCKET = 'applications';
 // Must stay in step with the CHECK constraint on applicants.status — see the
@@ -44,10 +44,23 @@ export async function updateApplicant(id, payload) {
 
   // Same rules the public form enforces — one shared validator, so an admin
   // edit can never write a record the form itself would have rejected.
-  const problem = validateApplicant(payload);
+  const problem = validateApplicant(payload) || validateExtras(payload);
   if (problem) throw new Error(problem);
 
-  const { name, email, phone, position, category, org, program, internStart, internEnd } = payload;
+  const {
+    name,
+    email,
+    phone,
+    position,
+    category,
+    org,
+    program,
+    internStart,
+    internEnd,
+    dateOfBirth,
+    expectedSalary,
+    noticePeriod,
+  } = payload;
   const admin = supabaseAdmin();
 
   // The position must still exist. Closed positions are allowed here (unlike on
@@ -73,6 +86,9 @@ export async function updateApplicant(id, payload) {
     .update({
       name: name.trim(),
       email: email.trim(),
+      date_of_birth: dateOfBirth || null,
+      expected_salary: isWorking && expectedSalary !== '' && expectedSalary != null ? Number(expectedSalary) : null,
+      notice_period_months: isWorking && noticePeriod !== '' && noticePeriod != null ? Number(noticePeriod) : null,
       phone: phone.trim(),
       position: position.trim(),
       category,

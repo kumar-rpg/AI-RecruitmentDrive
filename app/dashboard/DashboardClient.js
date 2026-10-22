@@ -110,6 +110,7 @@ export default function DashboardClient({ initialApplicants, initialPositions, u
   function exportCSV() {
     const headers = [
       'Name',
+      'Date of Birth',
       'Email',
       'Phone',
       'Position',
@@ -122,11 +123,14 @@ export default function DashboardClient({ initialApplicants, initialPositions, u
       'Resume Path',
       'Transcript Path',
       'Salary Slip Path',
+      'Expected Monthly Salary (RM)',
+      'Notice Period',
       'Status',
       'Submitted At',
     ];
     const rows = filtered.map((a) => [
       a.name,
+      formatDate(a.date_of_birth),
       a.email,
       a.phone,
       a.position,
@@ -139,6 +143,8 @@ export default function DashboardClient({ initialApplicants, initialPositions, u
       a.resume_path || '',
       a.transcript_path || '',
       a.salary_slip_path || '',
+      a.expected_salary ?? '',
+      formatMonths(a.notice_period_months),
       a.status,
       a.submitted_at,
     ]);

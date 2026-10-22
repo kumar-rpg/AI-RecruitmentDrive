@@ -4,6 +4,7 @@ import { randomUUID } from 'crypto';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
 import {
   validateApplicant,
+  validateExtras,
   monthsBetween,
   isInternPosition,
   categoryFitsPosition,
@@ -73,6 +74,9 @@ export async function submitApplication(payload) {
   const {
     id,
     name,
+    dateOfBirth,
+    expectedSalary,
+    noticePeriod,
     email,
     phone,
     position,
@@ -100,6 +104,11 @@ export async function submitApplication(payload) {
     internEnd,
   });
   if (problem) throw new Error(problem);
+  const extrasProblem = validateExtras(
+    { dateOfBirth, category, expectedSalary, noticePeriod },
+    { required: true }
+  );
+  if (extrasProblem) throw new Error(extrasProblem);
   if (!categoryFitsPosition(category, position)) {
     throw new Error(
       isInternPosition(position)
@@ -138,6 +147,9 @@ export async function submitApplication(payload) {
   const { error } = await admin.from('applicants').insert({
     id,
     name: name.trim(),
+    date_of_birth: dateOfBirth,
+    expected_salary: category === 'working' ? Number(expectedSalary) : null,
+    notice_period_months: category === 'working' ? Number(noticePeriod) : null,
     email: email.trim(),
     phone: phone.trim(),
     position: position.trim(),
