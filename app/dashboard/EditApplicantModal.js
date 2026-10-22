@@ -6,6 +6,7 @@ import {
   formatPhone,
   validateApplicant,
   validateExtras,
+  NOTICE_OPTIONS,
   sanitizeSalary,
   todayISO,
   monthsBetween,
@@ -195,15 +196,18 @@ export default function EditApplicantModal({ applicant, positions, onSaved, onCl
               value={form.expectedSalary}
               onChange={(e) => setForm({ ...form, expectedSalary: sanitizeSalary(e.target.value) })}
             />
-            <label>Notice Period (months)</label>
-            <input
-              type="text"
-              inputMode="numeric"
-              value={form.noticePeriod}
-              onChange={(e) =>
-                setForm({ ...form, noticePeriod: e.target.value.replace(/\D/g, '').slice(0, 2) })
-              }
-            />
+            <label>Notice Period</label>
+            <select
+              value={String(form.noticePeriod)}
+              onChange={(e) => setForm({ ...form, noticePeriod: e.target.value })}
+            >
+              <option value="">— Not provided —</option>
+              {NOTICE_OPTIONS.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
           </>
         )}
 

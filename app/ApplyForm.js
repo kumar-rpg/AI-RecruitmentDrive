@@ -17,6 +17,7 @@ import {
   isInternPosition,
   categoryFitsPosition,
   validateExtras,
+  NOTICE_OPTIONS,
   sanitizeSalary,
   todayISO,
 } from '@/lib/validation';
@@ -416,17 +417,21 @@ export default function ApplyForm({ positions }) {
               />
             </div>
             <div style={{ flex: '1 1 200px', minWidth: 0 }}>
-              <label>Notice Period (months)</label>
-              <input
-                type="text"
-                inputMode="numeric"
-                placeholder="e.g. 1"
+              <label>Notice Period</label>
+              <select
                 value={form.noticePeriod}
-                onChange={(e) =>
-                  setForm({ ...form, noticePeriod: e.target.value.replace(/\D/g, '').slice(0, 2) })
-                }
+                onChange={(e) => setForm({ ...form, noticePeriod: e.target.value })}
                 required
-              />
+              >
+                <option value="" disabled>
+                  Select notice period…
+                </option>
+                {NOTICE_OPTIONS.map((o) => (
+                  <option key={o.value} value={o.value}>
+                    {o.label}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
         )}

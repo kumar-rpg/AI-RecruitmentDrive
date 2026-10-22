@@ -8,6 +8,7 @@ import PositionsPanel from './PositionsPanel';
 import EditApplicantModal from './EditApplicantModal';
 import RealtimeSync from './RealtimeSync';
 import { updateStatus, deleteApplicant, getDocUrl, signOut, fetchDashboardData } from './actions';
+import { noticeLabel } from '@/lib/validation';
 
 const CATEGORY_LABEL = { intern: 'Intern', grad: 'Grad / Job-seeking', working: 'Already Working' };
 const STATUSES = [
@@ -144,7 +145,7 @@ export default function DashboardClient({ initialApplicants, initialPositions, u
       a.transcript_path || '',
       a.salary_slip_path || '',
       a.expected_salary ?? '',
-      formatMonths(a.notice_period_months),
+      noticeLabel(a.notice_period_months),
       a.status,
       a.submitted_at,
     ]);

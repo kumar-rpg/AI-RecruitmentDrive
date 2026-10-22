@@ -383,7 +383,9 @@ own Start/End Date pickers are unchanged and still drive what is stored.
 
 The public form now asks every applicant for a **Date of Birth**, beside
 Full Name, and Already Working applicants also for **Expected Monthly Salary
-(RM)** and **Notice Period (months, 0-12)**. All three are required where
+(RM)** and **Notice Period** (a dropdown: "I am ready to go now !", "1 Month",
+"2 Months" — stored as 0, 1 or 2 months; options live in `NOTICE_OPTIONS` in
+`lib/validation.js`). All three are required where
 shown and stored on `applicants` (`date_of_birth`, `expected_salary`,
 `notice_period_months` — `supabase/migrations/012_add_dob_salary_notice.sql`);
 salary and notice are cleared if the applicant switches away from Already
