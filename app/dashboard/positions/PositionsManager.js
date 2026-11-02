@@ -187,7 +187,7 @@ export default function PositionsManager({ initialPositions, initialNotification
           </label>
           <input
             type="text"
-            placeholder="n8n webhook URL — https://your-n8n-host/webhook/..."
+            placeholder="Webhook URL"
             value={notifyUrl}
             onChange={(e) => {
               setNotifyUrl(e.target.value);
