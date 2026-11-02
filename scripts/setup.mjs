@@ -395,6 +395,7 @@ const EXPECTED = {
     'date_of_birth,expected_salary,notice_period_months,' +
     'resume_path,transcript_path,status,submitted_at',
   positions: 'id,title,is_active,internship_start_date,created_at',
+  app_settings: 'id,notification_enabled,notification_webhook_url',
 };
 
 async function checkSchema(admin, allowApply = true) {

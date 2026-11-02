@@ -5,6 +5,8 @@ import { revalidatePath } from 'next/cache';
 import { supabaseServer } from '@/lib/supabaseServer';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
 import { validateApplicant, validateExtras, monthsBetween } from '@/lib/validation';
+import { validateTelegramUrl } from '@/lib/telegram';
+import { sendTelegram } from '@/lib/notify';
 
 const BUCKET = 'applications';
 // Must stay in step with the CHECK constraint on applicants.status — see the
@@ -159,6 +161,42 @@ export async function togglePositionActive(id, isActive) {
   // filter and the by-position panel built from a stale cached render.
   revalidatePath('/dashboard');
   revalidatePath('/dashboard/positions');
+  return { ok: true };
+}
+
+export async function saveNotificationSettings({ enabled, url }) {
+  await requireAdmin();
+
+  const trimmed = (url || '').trim();
+  // A link is only mandatory when Notification is ticked, but whatever is
+  // stored must always be a valid Telegram link.
+  if (enabled || trimmed) {
+    const problem = validateTelegramUrl(trimmed);
+    if (problem) throw new Error(problem);
+  }
+
+  const { error } = await supabaseAdmin()
+    .from('app_settings')
+    .upsert({
+      id: 1,
+      notification_enabled: !!enabled,
+      notification_webhook_url: trimmed || null,
+      updated_at: new Date().toISOString(),
+    });
+  if (error) throw new Error('Could not save notification settings: ' + error.message);
+
+  revalidatePath('/dashboard/positions');
+  return { ok: true };
+}
+
+export async function sendTestNotification(url) {
+  await requireAdmin();
+
+  const problem = validateTelegramUrl(url);
+  if (problem) throw new Error(problem);
+
+  const result = await sendTelegram(url, 'Test message from the Cortex Recruitment Drive dashboard.');
+  if (!result.ok) throw new Error(result.error);
   return { ok: true };
 }
 

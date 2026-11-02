@@ -1,7 +1,9 @@
 'use server';
 
 import { randomUUID } from 'crypto';
+import { after } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
+import { notifyNewApplication } from '@/lib/notify';
 import {
   validateApplicant,
   validateExtras,
@@ -166,6 +168,10 @@ export async function submitApplication(payload) {
   });
 
   if (error) throw new Error('Could not save application: ' + error.message);
+
+  // Runs after the response is sent, so a slow or broken webhook never delays
+  // or fails the applicant's submission.
+  after(() => notifyNewApplication({ name: name.trim(), position: position.trim(), category }));
 
   return { ok: true };
 }

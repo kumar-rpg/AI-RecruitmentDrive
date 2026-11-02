@@ -41,6 +41,17 @@ create table if not exists public.applicants (
   submitted_at timestamptz not null default now()
 );
 
+-- Single-row settings (Notification switch + Telegram webhook URL, which holds
+-- the bot token). RLS on, no policies: server code only.
+create table if not exists public.app_settings (
+  id integer primary key default 1 check (id = 1),
+  notification_enabled boolean not null default false,
+  notification_webhook_url text,
+  updated_at timestamptz not null default now()
+);
+alter table public.app_settings enable row level security;
+insert into public.app_settings (id) values (1) on conflict do nothing;
+
 create index if not exists applicants_submitted_at_idx on public.applicants (submitted_at desc);
 create index if not exists applicants_category_idx on public.applicants (category);
 create index if not exists applicants_status_idx on public.applicants (status);

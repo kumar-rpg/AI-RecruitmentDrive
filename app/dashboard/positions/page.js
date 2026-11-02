@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 import { supabaseServer } from '@/lib/supabaseServer';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
+import { getNotificationSettings } from '@/lib/notify';
 import PositionsManager from './PositionsManager';
 
 export const metadata = {
@@ -26,5 +27,9 @@ export default async function PositionsPage() {
     throw new Error('Could not load positions: ' + error.message);
   }
 
-  return <PositionsManager initialPositions={positions || []} />;
+  const notification = await getNotificationSettings();
+
+  return (
+    <PositionsManager initialPositions={positions || []} initialNotification={notification} />
+  );
 }

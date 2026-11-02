@@ -9,11 +9,17 @@ import {
   deletePosition,
   renamePosition,
   setPositionStartDate,
+  saveNotificationSettings,
+  sendTestNotification,
 } from '../actions';
 import { isInternPosition } from '@/lib/validation';
 
-export default function PositionsManager({ initialPositions }) {
+export default function PositionsManager({ initialPositions, initialNotification }) {
   const [positions, setPositions] = useState(initialPositions);
+  const [notifyEnabled, setNotifyEnabled] = useState(!!initialNotification?.enabled);
+  const [notifyUrl, setNotifyUrl] = useState(initialNotification?.url ?? '');
+  const [notifyBusy, setNotifyBusy] = useState('');
+  const [notifyMessage, setNotifyMessage] = useState(null); // { ok, text }
   const [newPositionTitle, setNewPositionTitle] = useState('');
   const [positionError, setPositionError] = useState('');
   const [positionBusyId, setPositionBusyId] = useState(null);
@@ -42,6 +48,32 @@ export default function PositionsManager({ initialPositions }) {
       await togglePositionActive(id, isActive);
     } catch (err) {
       alert('Could not update position: ' + err.message);
+    }
+  }
+
+  async function handleSaveNotification() {
+    setNotifyBusy('save');
+    setNotifyMessage(null);
+    try {
+      await saveNotificationSettings({ enabled: notifyEnabled, url: notifyUrl });
+      setNotifyMessage({ ok: true, text: 'Notification settings saved.' });
+    } catch (err) {
+      setNotifyMessage({ ok: false, text: err.message });
+    } finally {
+      setNotifyBusy('');
+    }
+  }
+
+  async function handleTestNotification() {
+    setNotifyBusy('test');
+    setNotifyMessage(null);
+    try {
+      await sendTestNotification(notifyUrl);
+      setNotifyMessage({ ok: true, text: 'Test message sent — check your Telegram chat.' });
+    } catch (err) {
+      setNotifyMessage({ ok: false, text: err.message });
+    } finally {
+      setNotifyBusy('');
     }
   }
 
@@ -122,6 +154,73 @@ export default function PositionsManager({ initialPositions }) {
           </Link>
         </div>
       </header>
+
+      <div className="card">
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+          <label
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              margin: 0,
+              whiteSpace: 'nowrap',
+              cursor: 'pointer',
+            }}
+          >
+            <input
+              type="checkbox"
+              checked={notifyEnabled}
+              onChange={(e) => {
+                setNotifyEnabled(e.target.checked);
+                setNotifyMessage(null);
+              }}
+              style={{ width: 'auto', margin: 0 }}
+            />
+            Notification
+          </label>
+          <input
+            type="text"
+            placeholder="Telegram webhook URL — https://api.telegram.org/bot<token>/sendMessage?chat_id=<id>"
+            value={notifyUrl}
+            onChange={(e) => {
+              setNotifyUrl(e.target.value);
+              setNotifyMessage(null);
+            }}
+            disabled={!notifyEnabled}
+            autoComplete="off"
+            spellCheck={false}
+            aria-label="Webhook URL"
+            style={{ flex: '1 1 320px', minWidth: 0 }}
+          />
+          <button
+            className="primary"
+            type="button"
+            onClick={handleSaveNotification}
+            disabled={notifyBusy !== ''}
+            style={{ marginTop: 0 }}
+          >
+            {notifyBusy === 'save' ? 'Saving…' : 'Save'}
+          </button>
+          <button
+            className="ghost"
+            type="button"
+            onClick={handleTestNotification}
+            disabled={notifyBusy !== '' || !notifyEnabled}
+          >
+            {notifyBusy === 'test' ? 'Sending…' : 'Send test'}
+          </button>
+        </div>
+        {notifyMessage &&
+          (notifyMessage.ok ? (
+            <div className="success-box">{notifyMessage.text}</div>
+          ) : (
+            <div className="err">{notifyMessage.text}</div>
+          ))}
+        <div className="hint">
+          When ticked, a Telegram message is sent for every new application. The link contains your
+          bot&apos;s secret token — only HR can see it here.
+        </div>
+      </div>
 
       <div className="card">
         <label>Add a Position</label>

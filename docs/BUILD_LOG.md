@@ -398,6 +398,27 @@ without, so older records that predate these fields stay editable (blank is
 fine, anything entered must still be valid). HR can see and edit all three in
 the Edit dialog, and they are in the CSV export; they are not table columns.
 
+## 22. Telegram notification on new applications
+
+Manage Positions has a **Notification** checkbox with a webhook URL box beside
+it, plus Save and Send test buttons. It is one global setting, stored in the
+single-row `app_settings` table (`supabase/migrations/013_add_app_settings.sql`;
+RLS on, no policies — server code only). When ticked, every new application
+sends a short Telegram message (name, position, category, dashboard link).
+
+The URL is a Telegram bot link,
+`https://api.telegram.org/bot<token>/sendMessage?chat_id=<id>`, and contains the
+bot token, so it is only ever read by admin-gated code. `validateTelegramUrl()`
+in `lib/telegram.js` accepts that exact shape and nothing else (https, host
+`api.telegram.org`, no port or credentials, `sendMessage` path, a `chat_id`) —
+the server POSTs to whatever is saved, so refusing every other host means the
+setting can't be pointed at an arbitrary or internal address.
+
+Sending lives in `lib/notify.js` and runs through Next's `after()` from
+`submitApplication`, so a slow or broken webhook never delays or fails an
+applicant's submission; failures are logged without the URL. Only new
+applications trigger it — not status changes.
+
 ---
 
 ## Where things stand
