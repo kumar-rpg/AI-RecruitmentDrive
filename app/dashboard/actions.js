@@ -5,8 +5,8 @@ import { revalidatePath } from 'next/cache';
 import { supabaseServer } from '@/lib/supabaseServer';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
 import { validateApplicant, validateExtras, monthsBetween } from '@/lib/validation';
-import { validateTelegramUrl } from '@/lib/telegram';
-import { sendTelegram } from '@/lib/notify';
+import { validateWebhookUrl } from '@/lib/webhook';
+import { sendWebhook } from '@/lib/notify';
 
 const BUCKET = 'applications';
 // Must stay in step with the CHECK constraint on applicants.status — see the
@@ -168,10 +168,10 @@ export async function saveNotificationSettings({ enabled, url }) {
   await requireAdmin();
 
   const trimmed = (url || '').trim();
-  // A link is only mandatory when Notification is ticked, but whatever is
-  // stored must always be a valid Telegram link.
+  // A URL is only mandatory when Notification is ticked, but whatever is
+  // stored must always be a valid webhook URL.
   if (enabled || trimmed) {
-    const problem = validateTelegramUrl(trimmed);
+    const problem = validateWebhookUrl(trimmed);
     if (problem) throw new Error(problem);
   }
 
@@ -192,10 +192,15 @@ export async function saveNotificationSettings({ enabled, url }) {
 export async function sendTestNotification(url) {
   await requireAdmin();
 
-  const problem = validateTelegramUrl(url);
+  const problem = validateWebhookUrl(url);
   if (problem) throw new Error(problem);
 
-  const result = await sendTelegram(url, 'Test message from the Cortex Recruitment Drive dashboard.');
+  // Same shape as a real application, with obviously fake values.
+  const result = await sendWebhook(url, {
+    name: 'Test Applicant',
+    email: 'test.applicant@example.com',
+    position: 'Test Position',
+  });
   if (!result.ok) throw new Error(result.error);
   return { ok: true };
 }

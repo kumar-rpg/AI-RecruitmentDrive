@@ -65,11 +65,18 @@ export default function PositionsManager({ initialPositions, initialNotification
   }
 
   async function handleTestNotification() {
+    if (
+      !confirm(
+        'This runs your workflow once with sample data (Test Applicant, test.applicant@example.com, Test Position). Continue?'
+      )
+    ) {
+      return;
+    }
     setNotifyBusy('test');
     setNotifyMessage(null);
     try {
       await sendTestNotification(notifyUrl);
-      setNotifyMessage({ ok: true, text: 'Test message sent — check your Telegram chat.' });
+      setNotifyMessage({ ok: true, text: 'Test sent — check your n8n workflow for the run.' });
     } catch (err) {
       setNotifyMessage({ ok: false, text: err.message });
     } finally {
@@ -180,7 +187,7 @@ export default function PositionsManager({ initialPositions, initialNotification
           </label>
           <input
             type="text"
-            placeholder="Telegram webhook URL — https://api.telegram.org/bot<token>/sendMessage?chat_id=<id>"
+            placeholder="n8n webhook URL — https://your-n8n-host/webhook/..."
             value={notifyUrl}
             onChange={(e) => {
               setNotifyUrl(e.target.value);
@@ -217,8 +224,9 @@ export default function PositionsManager({ initialPositions, initialNotification
             <div className="err">{notifyMessage.text}</div>
           ))}
         <div className="hint">
-          When ticked, a Telegram message is sent for every new application. The link contains your
-          bot&apos;s secret token — only HR can see it here.
+          When ticked, every new application sends its Name, Email and Position to this webhook
+          (a JSON POST), which starts your n8n workflow. Use the production URL from the
+          workflow&apos;s Webhook node, and make sure the workflow is Active.
         </div>
       </div>
 

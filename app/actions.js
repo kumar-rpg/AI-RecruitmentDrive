@@ -171,7 +171,9 @@ export async function submitApplication(payload) {
 
   // Runs after the response is sent, so a slow or broken webhook never delays
   // or fails the applicant's submission.
-  after(() => notifyNewApplication({ name: name.trim(), position: position.trim(), category }));
+  after(() =>
+    notifyNewApplication({ name: name.trim(), email: email.trim(), position: position.trim() })
+  );
 
   return { ok: true };
 }

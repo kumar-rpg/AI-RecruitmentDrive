@@ -398,26 +398,28 @@ without, so older records that predate these fields stay editable (blank is
 fine, anything entered must still be valid). HR can see and edit all three in
 the Edit dialog, and they are in the CSV export; they are not table columns.
 
-## 22. Telegram notification on new applications
+## 22. Webhook notification (n8n) on new applications
 
 Manage Positions has a **Notification** checkbox with a webhook URL box beside
 it, plus Save and Send test buttons. It is one global setting, stored in the
 single-row `app_settings` table (`supabase/migrations/013_add_app_settings.sql`;
 RLS on, no policies — server code only). When ticked, every new application
-sends a short Telegram message (name, position, category, dashboard link).
+POSTs JSON `{ name, email, position }` to the URL, which is an n8n Webhook
+node (use the production URL, with the workflow Active). Only new applications
+trigger it — not status changes.
 
-The URL is a Telegram bot link,
-`https://api.telegram.org/bot<token>/sendMessage?chat_id=<id>`, and contains the
-bot token, so it is only ever read by admin-gated code. `validateTelegramUrl()`
-in `lib/telegram.js` accepts that exact shape and nothing else (https, host
-`api.telegram.org`, no port or credentials, `sendMessage` path, a `chat_id`) —
-the server POSTs to whatever is saved, so refusing every other host means the
-setting can't be pointed at an arbitrary or internal address.
+Because the server POSTs applicant details to whatever URL HR saves, the URL is
+restricted to public https addresses: `validateWebhookUrl()` in
+`lib/webhook.js` rejects http, credentials in the URL, localhost, internal
+host names and private/link-local IP literals; `sendWebhook()` in
+`lib/notify.js` also resolves the host and refuses anything that points at a
+private address, and never follows redirects. Error messages never include the
+URL or the response body, since the URL may hold a secret path.
 
-Sending lives in `lib/notify.js` and runs through Next's `after()` from
-`submitApplication`, so a slow or broken webhook never delays or fails an
-applicant's submission; failures are logged without the URL. Only new
-applications trigger it — not status changes.
+Sending runs through Next's `after()` from `submitApplication`, so a slow or
+broken webhook never delays or fails an applicant's submission; failures are
+logged without the URL. Send test posts clearly fake data (Test Applicant,
+test.applicant@example.com, Test Position) after a confirm prompt.
 
 ---
 

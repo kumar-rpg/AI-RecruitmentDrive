@@ -1,7 +1,7 @@
 -- Run this in Supabase SQL Editor on the existing project.
--- One-row settings table. Holds the Notification switch and the Telegram
--- webhook URL (which contains the bot token, so it is a secret): RLS on, no
--- policies, only this app's server code (service role) ever reads or writes it.
+-- One-row settings table. Holds the Notification switch and the webhook URL
+-- (an n8n workflow; the URL may contain a secret path): RLS on, no policies,
+-- only this app's server code (service role) ever reads or writes it.
 
 create table if not exists public.app_settings (
   id integer primary key default 1 check (id = 1),

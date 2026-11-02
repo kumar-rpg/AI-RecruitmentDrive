@@ -41,8 +41,8 @@ create table if not exists public.applicants (
   submitted_at timestamptz not null default now()
 );
 
--- Single-row settings (Notification switch + Telegram webhook URL, which holds
--- the bot token). RLS on, no policies: server code only.
+-- Single-row settings (Notification switch + webhook URL, which may hold a
+-- secret path). RLS on, no policies: server code only.
 create table if not exists public.app_settings (
   id integer primary key default 1 check (id = 1),
   notification_enabled boolean not null default false,
